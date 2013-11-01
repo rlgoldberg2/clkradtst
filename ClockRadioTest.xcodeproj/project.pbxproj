@@ -22,6 +22,9 @@
 		7934264218231EA3004BC93B /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7934262618231EA3004BC93B /* CoreData.framework */; };
 		7934264A18231EA3004BC93B /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 7934264818231EA3004BC93B /* InfoPlist.strings */; };
 		7934264C18231EA3004BC93B /* ClockRadioTestTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 7934264B18231EA3004BC93B /* ClockRadioTestTests.m */; };
+		7934265618231EBD004BC93B /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 7934265518231EBD004BC93B /* Main.storyboard */; };
+		7934265918231F9A004BC93B /* RadioStationData.m in Sources */ = {isa = PBXBuildFile; fileRef = 7934265818231F9A004BC93B /* RadioStationData.m */; };
+		7934265C18233B7E004BC93B /* ClockRadioViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 7934265B18233B7E004BC93B /* ClockRadioViewController.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -53,6 +56,11 @@
 		7934264718231EA3004BC93B /* ClockRadioTestTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "ClockRadioTestTests-Info.plist"; sourceTree = "<group>"; };
 		7934264918231EA3004BC93B /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		7934264B18231EA3004BC93B /* ClockRadioTestTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ClockRadioTestTests.m; sourceTree = "<group>"; };
+		7934265518231EBD004BC93B /* Main.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = Main.storyboard; path = ../Main.storyboard; sourceTree = "<group>"; };
+		7934265718231F9A004BC93B /* RadioStationData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RadioStationData.h; sourceTree = "<group>"; };
+		7934265818231F9A004BC93B /* RadioStationData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RadioStationData.m; sourceTree = "<group>"; };
+		7934265A18233B7E004BC93B /* ClockRadioViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ClockRadioViewController.h; sourceTree = "<group>"; };
+		7934265B18233B7E004BC93B /* ClockRadioViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ClockRadioViewController.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -115,10 +123,15 @@
 		7934262818231EA3004BC93B /* ClockRadioTest */ = {
 			isa = PBXGroup;
 			children = (
+				7934265518231EBD004BC93B /* Main.storyboard */,
 				7934263118231EA3004BC93B /* AppDelegate.h */,
 				7934263218231EA3004BC93B /* AppDelegate.m */,
+				7934265A18233B7E004BC93B /* ClockRadioViewController.h */,
+				7934265B18233B7E004BC93B /* ClockRadioViewController.m */,
 				7934263718231EA3004BC93B /* Images.xcassets */,
 				7934263418231EA3004BC93B /* ClockRadioTest.xcdatamodeld */,
+				7934265718231F9A004BC93B /* RadioStationData.h */,
+				7934265818231F9A004BC93B /* RadioStationData.m */,
 				7934262918231EA3004BC93B /* Supporting Files */,
 			);
 			path = ClockRadioTest;
@@ -228,6 +241,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7934265618231EBD004BC93B /* Main.storyboard in Resources */,
 				7934262D18231EA3004BC93B /* InfoPlist.strings in Resources */,
 				7934263818231EA3004BC93B /* Images.xcassets in Resources */,
 			);
@@ -248,9 +262,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7934265918231F9A004BC93B /* RadioStationData.m in Sources */,
 				7934263318231EA3004BC93B /* AppDelegate.m in Sources */,
 				7934262F18231EA3004BC93B /* main.m in Sources */,
 				7934263618231EA3004BC93B /* ClockRadioTest.xcdatamodeld in Sources */,
+				7934265C18233B7E004BC93B /* ClockRadioViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
