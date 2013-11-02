@@ -12,6 +12,7 @@
 @property (weak, nonatomic) IBOutlet UITextField *nameTextField;
 @property (weak, nonatomic) IBOutlet UITextField *urlStreamTextField;
 @property (weak, nonatomic) IBOutlet UITextField *urlIconTextField;
+@property (weak, nonatomic) IBOutlet UITextField *displayOrderTextField;
 
 @end
 
@@ -35,7 +36,9 @@
         self.nameTextField.text = self.stationToEdit.name;
         self.urlStreamTextField.text = self.stationToEdit.url;
         self.urlIconTextField.text = self.stationToEdit.icon;
-        //self.displayOrder=self.stationToEdit.displayOrder;
+        
+        int displayOrderInt = [self.stationToEdit.displayOrder intValue]+1;
+        self.displayOrderTextField.text=[NSString stringWithFormat:@"%d", displayOrderInt];
     }
     else {
         self.nameTextField.text=nil;
@@ -56,13 +59,17 @@
 - (IBAction)save:(id)sender {
     
     NSManagedObjectContext *context = [self managedObjectContext];
+    int displayOrderInt;
     
     // if user is editing station, then update name,url,icon and resave
     if (self.stationToEdit) {
         self.stationToEdit.name = self.nameTextField.text;
         self.stationToEdit.url = self.urlStreamTextField.text;
         self.stationToEdit.icon = self.urlIconTextField.text;
-        // displayOrder and isEditable are already set, so no need to change here
+        displayOrderInt = [self.displayOrderTextField.text intValue]-1;
+        self.stationToEdit.displayOrder = [NSNumber numberWithInteger:displayOrderInt];
+
+        // isEditable is already set, so no need to change here
     }
     
     // if user is adding station, then set all fields and save
@@ -74,7 +81,8 @@
         newStation.name = self.nameTextField.text;
         newStation.url = self.urlStreamTextField.text;
         newStation.icon = self.urlIconTextField.text;
-        //newStation.displayOrder = [NSNumber numberWithInteger:self.displayOrder.integerValue];
+        int displayOrderInt = [self.displayOrderTextField.text intValue]-1;
+        newStation.displayOrder = [NSNumber numberWithInteger:displayOrderInt];
         newStation.isEditable = [NSNumber numberWithBool:YES];
     }
     

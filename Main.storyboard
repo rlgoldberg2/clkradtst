@@ -172,11 +172,18 @@
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <textInputTraits key="textInputTraits"/>
                             </textField>
+                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Display Order (start at 1)" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="T6u-aO-wGG">
+                                <rect key="frame" x="20" y="220" width="280" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits"/>
+                            </textField>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                     </view>
                     <navigationItem key="navigationItem" id="DGa-xK-Tlo"/>
                     <connections>
+                        <outlet property="displayOrderTextField" destination="T6u-aO-wGG" id="OAZ-hk-P6N"/>
                         <outlet property="nameTextField" destination="K8m-XX-OZ3" id="rAk-Ux-WPs"/>
                         <outlet property="urlIconTextField" destination="bvo-jK-cOM" id="RGu-DV-oOA"/>
                         <outlet property="urlStreamTextField" destination="m0d-pE-X53" id="17l-kz-B2u"/>

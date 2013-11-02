@@ -11,12 +11,16 @@
 @interface ClockRadioViewController ()
 @property (nonatomic, strong) NSMutableArray *radioStationsArray;
 @property (nonatomic, strong) NSManagedObjectContext *managedObjectContext;
+@property (nonatomic, strong) NSIndexPath *indexOfSelectedStation;
+
+@property (nonatomic, strong) NSTimer *oneSecTimer;
+
 @property (weak, nonatomic) IBOutlet UICollectionView *stationCollectionView;
 @property (weak, nonatomic) IBOutlet UILabel *dayLabel;
 @property (weak, nonatomic) IBOutlet UILabel *dateLabel;
 @property (weak, nonatomic) IBOutlet UILabel *timeLabel;
 @property (weak, nonatomic) IBOutlet UIButton *dayButton;
-@property (nonatomic, strong) NSIndexPath *indexOfSelectedStation;
+
 @end
 
 @implementation ClockRadioViewController
@@ -45,10 +49,34 @@
     lpgr.numberOfTouchesRequired = 1;
     lpgr.numberOfTapsRequired = 0;
     [self.stationCollectionView addGestureRecognizer:lpgr];
-
-    // setup timer with 1 sec interval so that clock displays current time
-    [NSTimer scheduledTimerWithTimeInterval:1.0 target:self selector:@selector(updateTime:) userInfo:nil repeats:YES];
     
+}
+
+
+- (void)viewDidAppear:(BOOL)animated
+{
+    [super viewDidAppear:animated];
+    
+    self.radioStationsArray=[self getRadioStationList];
+    if (self.radioStationsArray.count==0) {
+        [self preloadCoreDataDefaultStations];          // if database is empty, then preload it
+        self.radioStationsArray=[self getRadioStationList];  // now get list again
+    }
+    else {
+        NSLog(@"There's stuff in the database so skipping the import of default data");
+    }
+    
+    [self.stationCollectionView reloadData];
+    
+    // setup timer with 1 sec interval so that clock displays current time
+    self.oneSecTimer = [NSTimer scheduledTimerWithTimeInterval:1.0 target:self selector:@selector(updateTime:) userInfo:nil repeats:YES];
+    
+}
+
+- (void) viewDidDisappear:(BOOL)animated
+{
+    [super viewDidDisappear:animated];
+    [self.oneSecTimer invalidate];
     
 }
 
@@ -57,16 +85,16 @@
 -(void) handleLongPress:(UILongPressGestureRecognizer *)gestureRecognizer
 {
     if (gestureRecognizer.state == UIGestureRecognizerStateBegan) {
-
+        
         CGPoint P = [gestureRecognizer locationInView:self.stationCollectionView];
         self.indexOfSelectedStation = [self.stationCollectionView indexPathForItemAtPoint:P];
-        if (self.indexOfSelectedStation == nil) {
+        if (self.indexOfSelectedStation) {
+            [self performSegueWithIdentifier:@"editStation" sender:self];
+        }
+        else {
             NSLog(@"couldn't find indexPath");
         }
-        
-        [self performSegueWithIdentifier:@"editStation" sender:self];
     }
-    
 }
 
 // the following method is automatically called by the timer
@@ -95,22 +123,6 @@
 }
 
 
-
-- (void)viewDidAppear:(BOOL)animated
-{
-    [super viewDidAppear:animated];
-    
-    self.radioStationsArray=[self getRadioStationList];
-    if (self.radioStationsArray.count==0) {
-        [self preloadCoreDataDefaultStations];          // if database is empty, then preload it
-        self.radioStationsArray=[self getRadioStationList];  // now get list again
-    }
-    else {
-        NSLog(@"There's stuff in the database so skipping the import of default data");
-    }
-    
-    [self.stationCollectionView reloadData];
-}
 
 - (void)didReceiveMemoryWarning
 {
