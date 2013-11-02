@@ -8,7 +8,8 @@
 
 #import <UIKit/UIKit.h>
 #import "RadioStationData.h"
+#import "EditStationsViewController.h"
 
-@interface ClockRadioViewController : UIViewController <UICollectionViewDataSource, UICollectionViewDelegate>
+@interface ClockRadioViewController : UIViewController <UICollectionViewDataSource, UICollectionViewDelegate, UIGestureRecognizerDelegate>
 
 @end

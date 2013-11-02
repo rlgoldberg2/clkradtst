@@ -78,7 +78,7 @@
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
                                 <connections>
-                                    <action selector="sleepButtonPress:" destination="JsM-2h-dKB" eventType="touchUpInside" id="N2d-3T-Wvz"/>
+                                    <action selector="sleepButtonPress:" destination="JsM-2h-dKB" eventType="touchUpInside" id="zMi-CJ-YCM"/>
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="3H0-sZ-dwO">
@@ -90,17 +90,18 @@
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
                                 <connections>
-                                    <action selector="nightButtonPress:" destination="JsM-2h-dKB" eventType="touchUpInside" id="Elk-xY-0Dx"/>
+                                    <action selector="nightButtonPress:" destination="JsM-2h-dKB" eventType="touchUpInside" id="hyo-D3-4Lw"/>
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="pkd-mF-fqe">
                                 <rect key="frame" x="220" y="411" width="70" height="21"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <gestureRecognizers/>
                                 <state key="normal" title="Day">
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
                                 <connections>
-                                    <action selector="dayButtonPress:" destination="JsM-2h-dKB" eventType="touchUpInside" id="hXx-qb-aGF"/>
+                                    <action selector="dayButtonPress:" destination="JsM-2h-dKB" eventType="touchUpInside" id="ovh-CF-8Nw"/>
                                 </connections>
                             </button>
                         </subviews>
@@ -108,11 +109,9 @@
                     </view>
                     <connections>
                         <outlet property="dateLabel" destination="Mdz-i7-2gG" id="MAv-Yl-0O9"/>
-                        <outlet property="dayButton" destination="pkd-mF-fqe" id="9Fm-M1-o6E"/>
+                        <outlet property="dayButton" destination="pkd-mF-fqe" id="jOu-M6-We9"/>
                         <outlet property="dayLabel" destination="3lA-Jd-dWV" id="FPq-yO-gnZ"/>
-                        <outlet property="nightButton" destination="3H0-sZ-dwO" id="YMx-Yw-EAq"/>
-                        <outlet property="sleepButton" destination="bBD-0g-49m" id="aMP-zE-CdH"/>
-                        <outlet property="stationCollectionView" destination="H72-tt-YvD" id="dgs-cZ-Vo2"/>
+                        <outlet property="stationCollectionView" destination="H72-tt-YvD" id="Irb-Zp-bUc"/>
                         <outlet property="timeLabel" destination="TUo-jm-iqV" id="ipn-NV-b8d"/>
                         <segue destination="cQU-DX-Fbr" kind="modal" identifier="editStation" id="i1b-Fo-2Be"/>
                     </connections>

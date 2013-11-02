@@ -15,10 +15,12 @@
 @property (weak, nonatomic) IBOutlet UILabel *dayLabel;
 @property (weak, nonatomic) IBOutlet UILabel *dateLabel;
 @property (weak, nonatomic) IBOutlet UILabel *timeLabel;
-
+@property (weak, nonatomic) IBOutlet UIButton *dayButton;
+@property (nonatomic, strong) NSIndexPath *indexOfSelectedStation;
 @end
 
 @implementation ClockRadioViewController
+
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
@@ -33,13 +35,41 @@
 {
     [super viewDidLoad];
 	// Do any additional setup after loading the view.
+    UILongPressGestureRecognizer *lpgr = [[UILongPressGestureRecognizer alloc] initWithTarget:self
+                                                                                       action:@selector(handleLongPress:)];
+
+    [self.stationCollectionView addGestureRecognizer:lpgr];
+
+    lpgr.delegate = self;
+    lpgr.minimumPressDuration = 1.0;
+    lpgr.numberOfTouchesRequired = 1;
+    lpgr.numberOfTapsRequired = 0;
+    
+    
+}
+
+-(void) handleLongPress:(UILongPressGestureRecognizer *)gestureRecognizer
+{
+    if (gestureRecognizer.state != UIGestureRecognizerStateBegan) {
+        return;
+    }
+    CGPoint P = [gestureRecognizer locationInView:self.stationCollectionView];
+    
+    self.indexOfSelectedStation = [self.stationCollectionView indexPathForItemAtPoint:P];
+    if (self.indexOfSelectedStation == nil) {
+        NSLog(@"couldn't find indexPath");
+    }
+    
+    [self performSegueWithIdentifier:@"editStation" sender:self];
+    
+    
 }
 
 - (void)viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
     
-    [self updateTime];
+//    [self updateTime];
     
     self.radioStationsArray=[self getRadioStationList];
     if (self.radioStationsArray.count==0) {
@@ -73,7 +103,6 @@
     return self.radioStationsArray.count;
 }
 
-//- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 -(UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath
 {
     static NSString *CellIdentifier = @"stationCell";
@@ -145,10 +174,11 @@
 
 - (IBAction)sleepButtonPress:(id)sender {
     [UIScreen mainScreen].brightness = 0;
-
+    NSLog(@"sleep");
 }
 - (IBAction)nightButtonPress:(id)sender {
     [UIScreen mainScreen].brightness = 0.4;
+    NSLog(@"night");
 }
 
 - (IBAction)dayButtonPress:(id)sender {
@@ -259,16 +289,11 @@
     // user wants to edit station, grab data on this station and send to EditStationsViewController
     
     if ([[segue identifier] isEqualToString:@"editStation"]) {
-        RadioStationData *selectedStation = [self.radioStationsArray objectAtIndex:[[self.tableView indexPathForSelectedRow] row]];
+        //UICollectionViewCell *cell = [self.collectionView cellForItemAtIndexPath:self.indexOfSelectedStation];
+        RadioStationData *selectedStation = [self.radioStationsArray objectAtIndex:self.indexOfSelectedStation.row];
         destViewController.stationToEdit=selectedStation;
     }
     
-    // if user taps the new station button, just send it the number of current stations
-    // so that it can set the display order to the last station
-    
-    else {
-        destViewController.displayOrder = [NSNumber numberWithInteger:self.radioStationsArray.count];
-    }
     
 }
 
