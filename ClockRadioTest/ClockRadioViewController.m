@@ -139,7 +139,20 @@
     // Configure the cell...
     RadioStationData *info=[self.radioStationsArray objectAtIndex:indexPath.row];
     UILabel *radioLabel = (UILabel *) [cell viewWithTag:100];
-    radioLabel.text=info.name;
+    UIImageView *radioImage = (UIImageView *) [cell viewWithTag:200];
+
+    if (info.icon) {
+        radioImage.image = [UIImage imageNamed:info.icon];
+        radioImage.hidden = NO;
+        radioLabel.hidden = YES;
+    }
+    else {
+        radioLabel.text = info.name;
+        radioImage.hidden = YES;
+        radioLabel.hidden = NO;
+        radioLabel.numberOfLines = 0;
+        [radioLabel setLineBreakMode:NSLineBreakByWordWrapping];
+    }
     
     return cell;
     
@@ -232,6 +245,9 @@
                               withIcon:@"bbcIcon.jpg"
                         withEditStatus:NO
                       withDisplayOrder:@0];
+    
+    [self insertStationWithStationName:@"User defined" withURL:nil withIcon:nil withEditStatus:YES withDisplayOrder:@4];
+    
     
     NSLog(@"Importing Core Data Default Values for Roles Completed!");
 }
