@@ -34,7 +34,9 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-	// Do any additional setup after loading the view.
+    
+	// Setup long press gesture on collection view for when user does a press/hold on a radio station name
+    
     UILongPressGestureRecognizer *lpgr = [[UILongPressGestureRecognizer alloc] initWithTarget:self
                                                                                        action:@selector(handleLongPress:)];
 
@@ -44,33 +46,59 @@
     lpgr.numberOfTapsRequired = 0;
     [self.stationCollectionView addGestureRecognizer:lpgr];
 
-    [NSTimer scheduledTimerWithTimeInterval:1.0 target:self selector:@selector(updateTime) userInfo:nil repeats:YES];
+    // setup timer with 1 sec interval so that clock displays current time
+    [NSTimer scheduledTimerWithTimeInterval:1.0 target:self selector:@selector(updateTime:) userInfo:nil repeats:YES];
     
     
 }
 
+// the following method is automatically called when a long press occurs
+// the method will figure out which radio station the user was pressing, and start the segue to edit that station
 -(void) handleLongPress:(UILongPressGestureRecognizer *)gestureRecognizer
 {
-    if (gestureRecognizer.state != UIGestureRecognizerStateBegan) {
-        return;
+    if (gestureRecognizer.state == UIGestureRecognizerStateBegan) {
+
+        CGPoint P = [gestureRecognizer locationInView:self.stationCollectionView];
+        self.indexOfSelectedStation = [self.stationCollectionView indexPathForItemAtPoint:P];
+        if (self.indexOfSelectedStation == nil) {
+            NSLog(@"couldn't find indexPath");
+        }
+        
+        [self performSegueWithIdentifier:@"editStation" sender:self];
     }
-    CGPoint P = [gestureRecognizer locationInView:self.stationCollectionView];
-    
-    self.indexOfSelectedStation = [self.stationCollectionView indexPathForItemAtPoint:P];
-    if (self.indexOfSelectedStation == nil) {
-        NSLog(@"couldn't find indexPath");
-    }
-    
-    [self performSegueWithIdentifier:@"editStation" sender:self];
-    
     
 }
+
+// the following method is automatically called by the timer
+- (void) updateTime:(NSTimer *)timer
+{
+    NSDate *currentTime;
+    NSDate *currentDate;
+    NSDate *currentDay;
+    
+    //load the time
+    currentTime = [NSDate date];
+    NSDateFormatter *timeFormatter = [[NSDateFormatter alloc]init];
+    [timeFormatter setTimeStyle:NSDateFormatterShortStyle];
+    self.timeLabel.text = [timeFormatter stringFromDate:currentTime];
+    
+    //load the date
+    currentDate = [NSDate date];
+    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc]init];
+    [dateFormatter setDateStyle:NSDateFormatterLongStyle ];
+    self.dateLabel.text = [dateFormatter stringFromDate:currentDate];
+    
+    //load the day
+    currentDay = [NSDate date];
+    [dateFormatter setDateFormat:@"EEEE" ];
+    self.dayLabel.text = [dateFormatter stringFromDate:currentDay];
+}
+
+
 
 - (void)viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
-    
-//    [self updateTime];
     
     self.radioStationsArray=[self getRadioStationList];
     if (self.radioStationsArray.count==0) {
@@ -138,38 +166,6 @@
 }
 */
 
-- (void)updateTime {
-    
-    NSDate *currentTime;
-//    NSTimer *updateTimer;
-    NSDate *currentDate;
-    NSDate *currentDay;
-
-//    [updateTimer invalidate];
-//    updateTimer = nil;
-    
-    //load the time
-    
-    currentTime = [NSDate date];
-    NSDateFormatter *timeFormatter = [[NSDateFormatter alloc]init];
-    [timeFormatter setTimeStyle:NSDateFormatterShortStyle];
-    self.timeLabel.text = [timeFormatter stringFromDate:currentTime];
-    
-    //load the date
-    
-    currentDate = [NSDate date];
-    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc]init];
-    [dateFormatter setDateStyle:NSDateFormatterLongStyle ];
-    self.dateLabel.text = [dateFormatter stringFromDate:currentDate];
-    
-//    updateTimer = [
-    
-    //load the day
-    currentDay = [NSDate date];
-    [dateFormatter setDateFormat:@"EEEE" ];
-    
-    self.dayLabel.text = [dateFormatter stringFromDate:currentDay];
-}
 
 #pragma mark set screen brightness
 
@@ -290,7 +286,6 @@
     // user wants to edit station, grab data on this station and send to EditStationsViewController
     
     if ([[segue identifier] isEqualToString:@"editStation"]) {
-        //UICollectionViewCell *cell = [self.collectionView cellForItemAtIndexPath:self.indexOfSelectedStation];
         RadioStationData *selectedStation = [self.radioStationsArray objectAtIndex:self.indexOfSelectedStation.row];
         destViewController.stationToEdit=selectedStation;
     }
