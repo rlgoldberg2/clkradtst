@@ -38,12 +38,13 @@
     UILongPressGestureRecognizer *lpgr = [[UILongPressGestureRecognizer alloc] initWithTarget:self
                                                                                        action:@selector(handleLongPress:)];
 
-    [self.stationCollectionView addGestureRecognizer:lpgr];
-
     lpgr.delegate = self;
     lpgr.minimumPressDuration = 1.0;
     lpgr.numberOfTouchesRequired = 1;
     lpgr.numberOfTapsRequired = 0;
+    [self.stationCollectionView addGestureRecognizer:lpgr];
+
+    [NSTimer scheduledTimerWithTimeInterval:1.0 target:self selector:@selector(updateTime) userInfo:nil repeats:YES];
     
     
 }
@@ -140,12 +141,12 @@
 - (void)updateTime {
     
     NSDate *currentTime;
-    NSTimer *updateTimer;
+//    NSTimer *updateTimer;
     NSDate *currentDate;
     NSDate *currentDay;
 
-    [updateTimer invalidate];
-    updateTimer = nil;
+//    [updateTimer invalidate];
+//    updateTimer = nil;
     
     //load the time
     
@@ -161,7 +162,7 @@
     [dateFormatter setDateStyle:NSDateFormatterLongStyle ];
     self.dateLabel.text = [dateFormatter stringFromDate:currentDate];
     
-    updateTimer = [NSTimer scheduledTimerWithTimeInterval:0.1 target:self selector:@selector(updateTime) userInfo:nil repeats:YES];
+//    updateTimer = [
     
     //load the day
     currentDay = [NSDate date];
