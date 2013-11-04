@@ -13,6 +13,7 @@
 @property (weak, nonatomic) IBOutlet UITextField *urlStreamTextField;
 @property (weak, nonatomic) IBOutlet UITextField *urlIconTextField;
 @property (weak, nonatomic) IBOutlet UITextField *displayOrderTextField;
+@property (strong, nonatomic) NSNumber *originalDisplayOrder;
 
 @end
 
@@ -36,14 +37,13 @@
         self.nameTextField.text = self.stationToEdit.name;
         self.urlStreamTextField.text = self.stationToEdit.url;
         self.urlIconTextField.text = self.stationToEdit.icon;
-        
-        int displayOrderInt = [self.stationToEdit.displayOrder intValue]+1;
-        self.displayOrderTextField.text=[NSString stringWithFormat:@"%d", displayOrderInt];
+        self.displayOrderTextField.text=[NSString stringWithFormat:@"%@", self.stationToEdit.displayOrder];
     }
     else {
         self.nameTextField.text=nil;
         self.urlStreamTextField.text=nil;
         self.urlIconTextField.text=nil;
+        self.displayOrderTextField.text=nil;
     }
 }
 
@@ -66,9 +66,10 @@
         self.stationToEdit.name = self.nameTextField.text;
         self.stationToEdit.url = self.urlStreamTextField.text;
         self.stationToEdit.icon = self.urlIconTextField.text;
-        displayOrderInt = [self.displayOrderTextField.text intValue]-1;
-        self.stationToEdit.displayOrder = [NSNumber numberWithInteger:displayOrderInt];
-
+        displayOrderInt = [self.displayOrderTextField.text intValue];
+        if (displayOrderInt != [self.stationToEdit.displayOrder integerValue]) {
+            [self.editStationsDelegate displayOrderHasChanged:displayOrderInt];
+        }
         // isEditable is already set, so no need to change here
     }
     
@@ -81,7 +82,7 @@
         newStation.name = self.nameTextField.text;
         newStation.url = self.urlStreamTextField.text;
         newStation.icon = self.urlIconTextField.text;
-        int displayOrderInt = [self.displayOrderTextField.text intValue]-1;
+        int displayOrderInt = [self.displayOrderTextField.text intValue];
         newStation.displayOrder = [NSNumber numberWithInteger:displayOrderInt];
         newStation.isEditable = [NSNumber numberWithBool:YES];
     }

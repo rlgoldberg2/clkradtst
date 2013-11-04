@@ -256,9 +256,9 @@
                                withURL:@"http://bbc.play.com"
                               withIcon:@"bbcIcon.jpg"
                         withEditStatus:NO
-                      withDisplayOrder:@0];
+                      withDisplayOrder:@4];
     
-    [self insertStationWithStationName:@"User defined" withURL:nil withIcon:nil withEditStatus:YES withDisplayOrder:@4];
+    [self insertStationWithStationName:@"User defined" withURL:nil withIcon:nil withEditStatus:YES withDisplayOrder:@5];
     
     
     NSLog(@"Importing Core Data Default Values for Roles Completed!");
@@ -316,10 +316,13 @@
     if ([[segue identifier] isEqualToString:@"editStation"]) {
         RadioStationData *selectedStation = [self.radioStationsArray objectAtIndex:self.indexOfSelectedStation.row];
         destViewController.stationToEdit=selectedStation;
+        destViewController.editStationsDelegate = self;
     }
-    
-    
 }
 
+-(void) displayOrderHasChanged:(int)newdisplayOrder
+{
+    NSLog(@"the new display order position is %d",newdisplayOrder);
+}
 
 @end
