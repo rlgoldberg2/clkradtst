@@ -16,6 +16,7 @@
 @property (nonatomic, strong) NSTimer *oneSecTimer;
 
 @property (nonatomic, strong) NSNumber *displayMode;
+@property (nonatomic, strong) UIView *selectedBGView;
 
 @property (weak, nonatomic) IBOutlet UICollectionView *stationCollectionView;
 @property (weak, nonatomic) IBOutlet UILabel *dayLabel;
@@ -25,8 +26,8 @@
 
 @end
 
-#define DISPLAY_MODE_SLEEP 1
 #define DISPLAY_MODE_DAY 0
+#define DISPLAY_MODE_SLEEP 1
 #define DISPLAY_MODE_NIGHT 2
 
 @implementation ClockRadioViewController
@@ -47,8 +48,7 @@
     
 	// Setup long press gesture on collection view for when user does a press/hold on a radio station name
     
-    UILongPressGestureRecognizer *lpgr = [[UILongPressGestureRecognizer alloc] initWithTarget:self
-                                                                                       action:@selector(handleLongPress:)];
+    UILongPressGestureRecognizer *lpgr = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(handleLongPress:)];
 
     lpgr.delegate = self;
     lpgr.minimumPressDuration = 1.0;
@@ -56,8 +56,10 @@
     lpgr.numberOfTapsRequired = 0;
     [self.stationCollectionView addGestureRecognizer:lpgr];
     
-    // put screen in day mode
+    // force to start in day mode
     [self dayButtonPress:self];
+
+
     
 }
 
@@ -74,6 +76,8 @@
     else {
         NSLog(@"There's stuff in the database so skipping the import of default data");
     }
+
+    // this will refresh the collection view.  If any changes have been made (i.e. cells have moved) then it will show those changes by animating them
     
     [self animateChangesInCollectionView];
     
@@ -157,7 +161,10 @@
 {
     static NSString *CellIdentifier = @"stationCell";
     UICollectionViewCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:CellIdentifier forIndexPath:indexPath];
+
     // Configure the cell...
+    cell.selectedBackgroundView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"RedBorder.png"]];
+
     RadioStationData *info=[self.radioStationsArray objectAtIndex:indexPath.row];
     UILabel *radioLabel = (UILabel *) [cell viewWithTag:100];
     UIImageView *radioImage = (UIImageView *) [cell viewWithTag:200];
@@ -179,6 +186,18 @@
     }
     
     return cell;
+    
+}
+- (void) collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath
+{
+    NSLog(@"selected item %d", indexPath.row);
+//    [self.stationCollectionView reloadData];
+
+}
+
+- (void) collectionView:(UICollectionView *)collectionView didDeselectItemAtIndexPath:(NSIndexPath *)indexPath
+{
+    NSLog(@"deselected item %d", indexPath.row);
     
 }
 

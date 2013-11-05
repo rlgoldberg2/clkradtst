@@ -26,6 +26,7 @@
 		7934265918231F9A004BC93B /* RadioStationData.m in Sources */ = {isa = PBXBuildFile; fileRef = 7934265818231F9A004BC93B /* RadioStationData.m */; };
 		7934265C18233B7E004BC93B /* ClockRadioViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 7934265B18233B7E004BC93B /* ClockRadioViewController.m */; };
 		7934265F1823571B004BC93B /* EditStationsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 7934265E1823571B004BC93B /* EditStationsViewController.m */; };
+		793A4FB8182954FD0002DF18 /* RedBorder.png in Resources */ = {isa = PBXBuildFile; fileRef = 793A4FB7182954FD0002DF18 /* RedBorder.png */; };
 		795B1DAC182524FC00EB6C6D /* bbcIcon.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 795B1DA8182524FC00EB6C6D /* bbcIcon.jpg */; };
 		795B1DAD182524FC00EB6C6D /* cbcIcon.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 795B1DA9182524FC00EB6C6D /* cbcIcon.jpg */; };
 		795B1DAE182524FC00EB6C6D /* espnIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = 795B1DAA182524FC00EB6C6D /* espnIcon.png */; };
@@ -68,6 +69,7 @@
 		7934265B18233B7E004BC93B /* ClockRadioViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ClockRadioViewController.m; sourceTree = "<group>"; };
 		7934265D1823571B004BC93B /* EditStationsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EditStationsViewController.h; sourceTree = "<group>"; };
 		7934265E1823571B004BC93B /* EditStationsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EditStationsViewController.m; sourceTree = "<group>"; };
+		793A4FB7182954FD0002DF18 /* RedBorder.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = RedBorder.png; sourceTree = "<group>"; };
 		795B1DA8182524FC00EB6C6D /* bbcIcon.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = bbcIcon.jpg; sourceTree = "<group>"; };
 		795B1DA9182524FC00EB6C6D /* cbcIcon.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = cbcIcon.jpg; sourceTree = "<group>"; };
 		795B1DAA182524FC00EB6C6D /* espnIcon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = espnIcon.png; sourceTree = "<group>"; };
@@ -134,13 +136,13 @@
 		7934262818231EA3004BC93B /* ClockRadioTest */ = {
 			isa = PBXGroup;
 			children = (
+				7934265A18233B7E004BC93B /* ClockRadioViewController.h */,
+				7934265B18233B7E004BC93B /* ClockRadioViewController.m */,
 				7934265D1823571B004BC93B /* EditStationsViewController.h */,
 				7934265E1823571B004BC93B /* EditStationsViewController.m */,
 				7934265518231EBD004BC93B /* Main.storyboard */,
 				7934263118231EA3004BC93B /* AppDelegate.h */,
 				7934263218231EA3004BC93B /* AppDelegate.m */,
-				7934265A18233B7E004BC93B /* ClockRadioViewController.h */,
-				7934265B18233B7E004BC93B /* ClockRadioViewController.m */,
 				7934263718231EA3004BC93B /* Images.xcassets */,
 				7934263418231EA3004BC93B /* ClockRadioTest.xcdatamodeld */,
 				7934265718231F9A004BC93B /* RadioStationData.h */,
@@ -153,6 +155,7 @@
 		7934262918231EA3004BC93B /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				793A4FB7182954FD0002DF18 /* RedBorder.png */,
 				795B1DA8182524FC00EB6C6D /* bbcIcon.jpg */,
 				795B1DA9182524FC00EB6C6D /* cbcIcon.jpg */,
 				795B1DAA182524FC00EB6C6D /* espnIcon.png */,
@@ -259,6 +262,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				795B1DAE182524FC00EB6C6D /* espnIcon.png in Resources */,
+				793A4FB8182954FD0002DF18 /* RedBorder.png in Resources */,
 				7934265618231EBD004BC93B /* Main.storyboard in Resources */,
 				7934262D18231EA3004BC93B /* InfoPlist.strings in Resources */,
 				795B1DAF182524FC00EB6C6D /* nprIcon.jpg in Resources */,
