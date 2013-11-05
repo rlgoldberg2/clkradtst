@@ -59,16 +59,17 @@
 - (IBAction)save:(id)sender {
     
     NSManagedObjectContext *context = [self managedObjectContext];
-    int displayOrderInt;
+    int newDisplayOrder, oldDisplayOrder;
     
     // if user is editing station, then update name,url,icon and resave
     if (self.stationToEdit) {
         self.stationToEdit.name = self.nameTextField.text;
         self.stationToEdit.url = self.urlStreamTextField.text;
         self.stationToEdit.icon = self.urlIconTextField.text;
-        displayOrderInt = [self.displayOrderTextField.text intValue];
-        if (displayOrderInt != [self.stationToEdit.displayOrder integerValue]) {
-            [self.editStationsDelegate displayOrderHasChanged:displayOrderInt];
+        newDisplayOrder = [self.displayOrderTextField.text intValue];
+        oldDisplayOrder = [self.stationToEdit.displayOrder integerValue];
+        if (newDisplayOrder != oldDisplayOrder) {
+            [self.editStationsDelegate displayOrderHasChanged:oldDisplayOrder to:newDisplayOrder];
         }
         // isEditable is already set, so no need to change here
     }

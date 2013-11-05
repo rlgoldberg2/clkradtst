@@ -15,6 +15,8 @@
 
 @property (nonatomic, strong) NSTimer *oneSecTimer;
 
+@property (nonatomic, strong) NSNumber *displayMode;
+
 @property (weak, nonatomic) IBOutlet UICollectionView *stationCollectionView;
 @property (weak, nonatomic) IBOutlet UILabel *dayLabel;
 @property (weak, nonatomic) IBOutlet UILabel *dateLabel;
@@ -22,6 +24,10 @@
 @property (weak, nonatomic) IBOutlet UIButton *dayButton;
 
 @end
+
+#define DISPLAY_MODE_SLEEP 1
+#define DISPLAY_MODE_DAY 0
+#define DISPLAY_MODE_NIGHT 2
 
 @implementation ClockRadioViewController
 
@@ -50,6 +56,9 @@
     lpgr.numberOfTapsRequired = 0;
     [self.stationCollectionView addGestureRecognizer:lpgr];
     
+    // put screen in day mode
+    [self dayButtonPress:self];
+    
 }
 
 
@@ -66,7 +75,7 @@
         NSLog(@"There's stuff in the database so skipping the import of default data");
     }
     
-    [self.stationCollectionView reloadData];
+    [self animateChangesInCollectionView];
     
     // setup timer with 1 sec interval so that clock displays current time
     self.oneSecTimer = [NSTimer scheduledTimerWithTimeInterval:1.0 target:self selector:@selector(updateTime:) userInfo:nil repeats:YES];
@@ -153,11 +162,14 @@
     UILabel *radioLabel = (UILabel *) [cell viewWithTag:100];
     UIImageView *radioImage = (UIImageView *) [cell viewWithTag:200];
 
-    if (info.icon) {
+    // if there was an icon specified, and it's not sleep mode, then display icon and hide label
+    if (info.icon.length > 0 && [self.displayMode intValue] != DISPLAY_MODE_SLEEP) {
         radioImage.image = [UIImage imageNamed:info.icon];
         radioImage.hidden = NO;
         radioLabel.hidden = YES;
     }
+    
+    // otherwise, display label and hide icon
     else {
         radioLabel.text = info.name;
         radioImage.hidden = YES;
@@ -196,17 +208,30 @@
 
 - (IBAction)sleepButtonPress:(id)sender {
     [UIScreen mainScreen].brightness = 0;
-    NSLog(@"sleep");
+    self.displayMode=@DISPLAY_MODE_SLEEP;
+    [self animateChangesInCollectionView];
 }
+
 - (IBAction)nightButtonPress:(id)sender {
     [UIScreen mainScreen].brightness = 0.4;
-    NSLog(@"night");
+    self.displayMode=@DISPLAY_MODE_NIGHT;
+    [self animateChangesInCollectionView];
 }
 
 - (IBAction)dayButtonPress:(id)sender {
     [UIScreen mainScreen].brightness = 1.0;
+    self.displayMode=@DISPLAY_MODE_DAY;
+    [self animateChangesInCollectionView];
 }
 
+#pragma mark animate any changes in collection view
+
+-(void) animateChangesInCollectionView
+{
+    [self.stationCollectionView performBatchUpdates:^{
+    [self.stationCollectionView reloadSections:[NSIndexSet indexSetWithIndex:0]];
+    } completion:nil];
+}
 
 #pragma mark initializing core data
 
@@ -320,9 +345,23 @@
     }
 }
 
--(void) displayOrderHasChanged:(int)newdisplayOrder
+-(void) displayOrderHasChanged: (int) oldDisplayOrder to: (int) newDisplayOrder;
 {
-    NSLog(@"the new display order position is %d",newdisplayOrder);
+    NSLog(@"the new display changed from: %d to %d",oldDisplayOrder, newDisplayOrder);
+
+    // first remove item from local array and move it to new place
+    RadioStationData *item = [self.radioStationsArray objectAtIndex:oldDisplayOrder-1];
+    [self.radioStationsArray removeObjectAtIndex:oldDisplayOrder-1];
+    [self.radioStationsArray insertObject:item atIndex:newDisplayOrder-1];
+    
+    // then setup a new display order based on the current order of the items
+    int i = 1;
+    for(RadioStationData *row in self.radioStationsArray) {
+        row.displayOrder = [NSNumber numberWithInt:i++];
+        NSLog(@"Station %@ order %@",row.name, row.displayOrder);
+    }
+    [self saveRadioStationList];
+
 }
 
 @end

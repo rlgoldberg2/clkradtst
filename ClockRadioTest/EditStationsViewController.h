@@ -22,5 +22,5 @@
 
 @protocol EditStationsDelegate <NSObject>;
 @required
--(void) displayOrderHasChanged: (int) newdisplayOrder;
+-(void) displayOrderHasChanged: (int) oldDisplayOrder to: (int) newDisplayOrder;
 @end
