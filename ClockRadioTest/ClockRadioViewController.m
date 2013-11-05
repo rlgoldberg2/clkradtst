@@ -11,12 +11,12 @@
 @interface ClockRadioViewController ()
 @property (nonatomic, strong) NSMutableArray *radioStationsArray;
 @property (nonatomic, strong) NSManagedObjectContext *managedObjectContext;
-@property (nonatomic, strong) NSIndexPath *indexOfSelectedStation;
 
+@property (nonatomic, strong) NSIndexPath *indexOfLongPressSelectedStation;
+@property (nonatomic, strong) NSNumber *indexOfSelectedStation;
 @property (nonatomic, strong) NSTimer *oneSecTimer;
 
 @property (nonatomic, strong) NSNumber *displayMode;
-@property (nonatomic, strong) UIView *selectedBGView;
 
 @property (weak, nonatomic) IBOutlet UICollectionView *stationCollectionView;
 @property (weak, nonatomic) IBOutlet UILabel *dayLabel;
@@ -51,6 +51,7 @@
     UILongPressGestureRecognizer *lpgr = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(handleLongPress:)];
 
     lpgr.delegate = self;
+    lpgr.delaysTouchesBegan = YES;  //cell will not be selected during long press
     lpgr.minimumPressDuration = 1.0;
     lpgr.numberOfTouchesRequired = 1;
     lpgr.numberOfTapsRequired = 0;
@@ -100,8 +101,8 @@
     if (gestureRecognizer.state == UIGestureRecognizerStateBegan) {
         
         CGPoint P = [gestureRecognizer locationInView:self.stationCollectionView];
-        self.indexOfSelectedStation = [self.stationCollectionView indexPathForItemAtPoint:P];
-        if (self.indexOfSelectedStation) {
+        self.indexOfLongPressSelectedStation = [self.stationCollectionView indexPathForItemAtPoint:P];
+        if (self.indexOfLongPressSelectedStation) {
             [self performSegueWithIdentifier:@"editStation" sender:self];
         }
         else {
@@ -191,12 +192,24 @@
 - (void) collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath
 {
     NSLog(@"selected item %d", indexPath.row);
-//    [self.stationCollectionView reloadData];
-
+    
+    //check if this item is already selected
+    if (indexPath.row == self.indexOfSelectedStation.intValue) {
+        //yes, then deselect it
+        [self.stationCollectionView deselectItemAtIndexPath:indexPath animated:YES];
+        [self collectionView:self.stationCollectionView didDeselectItemAtIndexPath:indexPath];
+    }
+    else {
+        //otherwise, then save currently selected station
+        self.indexOfSelectedStation = [NSNumber numberWithInt:indexPath.row];
+        
+    }
 }
 
 - (void) collectionView:(UICollectionView *)collectionView didDeselectItemAtIndexPath:(NSIndexPath *)indexPath
 {
+    self.indexOfSelectedStation = [NSNumber numberWithInt:-1];
+    
     NSLog(@"deselected item %d", indexPath.row);
     
 }
@@ -358,7 +371,7 @@
     // user wants to edit station, grab data on this station and send to EditStationsViewController
     
     if ([[segue identifier] isEqualToString:@"editStation"]) {
-        RadioStationData *selectedStation = [self.radioStationsArray objectAtIndex:self.indexOfSelectedStation.row];
+        RadioStationData *selectedStation = [self.radioStationsArray objectAtIndex:self.indexOfLongPressSelectedStation.row];
         destViewController.stationToEdit=selectedStation;
         destViewController.editStationsDelegate = self;
     }
