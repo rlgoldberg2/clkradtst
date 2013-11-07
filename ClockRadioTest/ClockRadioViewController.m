@@ -190,6 +190,14 @@
         radioLabel.numberOfLines = 0;
         [radioLabel setLineBreakMode:NSLineBreakByWordWrapping];
     }
+
+    // if this station is currently selected and playing, then we want to maintain that selection to keep the selected boarder around the cell
+    if (indexPath.row == self.indexOfSelectedStation.intValue) {
+        cell.selected = TRUE;
+        [self.stationCollectionView selectItemAtIndexPath:indexPath animated:YES scrollPosition:UICollectionViewScrollPositionNone];
+        NSLog(@"cell %d selected", indexPath.row);
+    }
+
     
     return cell;
     
@@ -205,7 +213,7 @@
         [self collectionView:self.stationCollectionView didDeselectItemAtIndexPath:indexPath];
     }
     else {
-        //otherwise, then save and play the currently selected station
+        //otherwise, then save and play the newly selected station
         self.indexOfSelectedStation = [NSNumber numberWithInt:indexPath.row];
         PresetStationData *station = [self.radioStationsArray objectAtIndex:indexPath.row];
         self.streamingPlayer = [RadioStationModel radioStationPlay:station];
