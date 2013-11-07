@@ -7,6 +7,7 @@
 //
 
 #import "ClockRadioViewController.h"
+#import "RadioStationModel.h"
 
 @interface ClockRadioViewController ()
 @property (nonatomic, strong) NSMutableArray *radioStationsArray;
@@ -15,8 +16,10 @@
 @property (nonatomic, strong) NSIndexPath *indexOfLongPressSelectedStation;
 @property (nonatomic, strong) NSNumber *indexOfSelectedStation;
 @property (nonatomic, strong) NSTimer *oneSecTimer;
-
 @property (nonatomic, strong) NSNumber *displayMode;
+
+@property (nonatomic, strong) AVPlayer *streamingPlayer;
+//@property (nonatomic, strong) AVPlayerItem *playerItem;
 
 @property (weak, nonatomic) IBOutlet UICollectionView *stationCollectionView;
 @property (weak, nonatomic) IBOutlet UILabel *dayLabel;
@@ -56,6 +59,8 @@
     lpgr.numberOfTouchesRequired = 1;
     lpgr.numberOfTapsRequired = 0;
     [self.stationCollectionView addGestureRecognizer:lpgr];
+    
+    self.indexOfSelectedStation = @-1;
     
     // force to start in day mode
     [self dayButtonPress:self];
@@ -200,15 +205,17 @@
         [self collectionView:self.stationCollectionView didDeselectItemAtIndexPath:indexPath];
     }
     else {
-        //otherwise, then save currently selected station
+        //otherwise, then save and play the currently selected station
         self.indexOfSelectedStation = [NSNumber numberWithInt:indexPath.row];
-        
+        RadioStationData *station = [self.radioStationsArray objectAtIndex:indexPath.row];
+        self.streamingPlayer = [RadioStationModel radioStationPlay:station];
     }
 }
 
 - (void) collectionView:(UICollectionView *)collectionView didDeselectItemAtIndexPath:(NSIndexPath *)indexPath
 {
     self.indexOfSelectedStation = [NSNumber numberWithInt:-1];
+    [RadioStationModel radioStationPlayPause:self.streamingPlayer];
     
     NSLog(@"deselected item %d", indexPath.row);
     
@@ -292,25 +299,25 @@
     
     NSLog(@"Importing Core Data Default Values for Roles...");
     [self insertStationWithStationName:@"ESPN"
-                               withURL:@"http://espn.play.com"
+                               withURL:@"http://den-a.plr.liquidcompass.net/pls/KIROAMMP3.pls"
                               withIcon:@"espnIcon.png"
                         withEditStatus:YES
                       withDisplayOrder:@3];
     
     [self insertStationWithStationName:@"CBC News"
-                               withURL:@"http://cbc.play.com"
+                               withURL:@"http://playerservices.streamtheworld.com/pls/CBC_R1_TOR_H.pls"
                               withIcon:@"cbcIcon.jpg"
                         withEditStatus:NO
                       withDisplayOrder:@1];
     
     [self insertStationWithStationName:@"NPR News"
-                               withURL:@"http://npr.play.com"
+                               withURL:@"http://152.2.63.68:8000/listen.pls"
                               withIcon:@"nprIcon.jpg"
                         withEditStatus:YES
                       withDisplayOrder:@2];
     
     [self insertStationWithStationName:@"BBC News"
-                               withURL:@"http://bbc.play.com"
+                               withURL:@"http://www.bbc.co.uk/worldservice/meta/tx/nb/live/eneuk.pls"
                               withIcon:@"bbcIcon.jpg"
                         withEditStatus:NO
                       withDisplayOrder:@4];

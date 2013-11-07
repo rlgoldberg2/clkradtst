@@ -31,6 +31,8 @@
 		795B1DAD182524FC00EB6C6D /* cbcIcon.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 795B1DA9182524FC00EB6C6D /* cbcIcon.jpg */; };
 		795B1DAE182524FC00EB6C6D /* espnIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = 795B1DAA182524FC00EB6C6D /* espnIcon.png */; };
 		795B1DAF182524FC00EB6C6D /* nprIcon.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 795B1DAB182524FC00EB6C6D /* nprIcon.jpg */; };
+		798F0CD0182B20F500C7B954 /* RadioStationModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 798F0CCF182B20F500C7B954 /* RadioStationModel.m */; };
+		79BC9EB41829856000AA923C /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 79BC9EB31829856000AA923C /* AVFoundation.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -74,6 +76,9 @@
 		795B1DA9182524FC00EB6C6D /* cbcIcon.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = cbcIcon.jpg; sourceTree = "<group>"; };
 		795B1DAA182524FC00EB6C6D /* espnIcon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = espnIcon.png; sourceTree = "<group>"; };
 		795B1DAB182524FC00EB6C6D /* nprIcon.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = nprIcon.jpg; sourceTree = "<group>"; };
+		798F0CCE182B20F500C7B954 /* RadioStationModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RadioStationModel.h; path = ../RadioStationModel.h; sourceTree = "<group>"; };
+		798F0CCF182B20F500C7B954 /* RadioStationModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = RadioStationModel.m; path = ../RadioStationModel.m; sourceTree = "<group>"; };
+		79BC9EB31829856000AA923C /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -81,6 +86,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				79BC9EB41829856000AA923C /* AVFoundation.framework in Frameworks */,
 				7934262318231EA3004BC93B /* CoreGraphics.framework in Frameworks */,
 				7934262718231EA3004BC93B /* CoreData.framework in Frameworks */,
 				7934262518231EA3004BC93B /* UIKit.framework in Frameworks */,
@@ -124,6 +130,7 @@
 		7934261F18231EA3004BC93B /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				79BC9EB31829856000AA923C /* AVFoundation.framework */,
 				7934262018231EA3004BC93B /* Foundation.framework */,
 				7934262218231EA3004BC93B /* CoreGraphics.framework */,
 				7934262418231EA3004BC93B /* UIKit.framework */,
@@ -136,6 +143,8 @@
 		7934262818231EA3004BC93B /* ClockRadioTest */ = {
 			isa = PBXGroup;
 			children = (
+				798F0CCE182B20F500C7B954 /* RadioStationModel.h */,
+				798F0CCF182B20F500C7B954 /* RadioStationModel.m */,
 				7934265A18233B7E004BC93B /* ClockRadioViewController.h */,
 				7934265B18233B7E004BC93B /* ClockRadioViewController.m */,
 				7934265D1823571B004BC93B /* EditStationsViewController.h */,
@@ -290,6 +299,7 @@
 				7934265918231F9A004BC93B /* RadioStationData.m in Sources */,
 				7934263318231EA3004BC93B /* AppDelegate.m in Sources */,
 				7934262F18231EA3004BC93B /* main.m in Sources */,
+				798F0CD0182B20F500C7B954 /* RadioStationModel.m in Sources */,
 				7934263618231EA3004BC93B /* ClockRadioTest.xcdatamodeld in Sources */,
 				7934265C18233B7E004BC93B /* ClockRadioViewController.m in Sources */,
 				7934265F1823571B004BC93B /* EditStationsViewController.m in Sources */,
