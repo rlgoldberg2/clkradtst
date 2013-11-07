@@ -358,67 +358,27 @@
 
 #pragma mark - Navigation
 
-
-/*
 // In a story board-based application, you will often want to do a little preparation before navigation
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
 {
+    
     // Get the new view controller using [segue destinationViewController].
     // Pass the selected object to the new view controller.
-    
-    EditStationsViewController *destViewController = segue.destinationViewController;
-    
-    // user wants to edit station, grab data on this station and send to EditStationsViewController
-    
-    if ([[segue identifier] isEqualToString:@"setPresetStation"]) {
-        PresetStationData *selectedStation = [self.radioStationsArray objectAtIndex:self.indexOfLongPressSelectedStation.row];
-        destViewController.stationToEdit=selectedStation;
-        destViewController.editStationsDelegate = self;
-    }
-}
-
--(void) displayOrderHasChanged: (int) oldDisplayOrder to: (int) newDisplayOrder;
-{
-    NSLog(@"the new display changed from: %d to %d",oldDisplayOrder, newDisplayOrder);
-
-    // first remove item from local array and move it to new place
-    PresetStationData *item = [self.radioStationsArray objectAtIndex:oldDisplayOrder-1];
-    [self.radioStationsArray removeObjectAtIndex:oldDisplayOrder-1];
-    [self.radioStationsArray insertObject:item atIndex:newDisplayOrder-1];
-    
-    // then setup a new display order based on the current order of the items
-    int i = 1;
-    for(PresetStationData *row in self.radioStationsArray) {
-        row.presetStationNumber = [NSNumber numberWithInt:i++];
-        NSLog(@"Station %@ order %@",row.stationName, row.presetStationNumber);
-    }
-    [self saveRadioStationList];
-
-}
-
- */
-
-
- // In a story board-based application, you will often want to do a little preparation before navigation
- - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
- {
- // Get the new view controller using [segue destinationViewController].
- // Pass the selected object to the new view controller.
-     UINavigationController *navigationController = segue.destinationViewController;
-     setPresetStationViewController *destViewController = (id)[[navigationController viewControllers] objectAtIndex:0];
+    UINavigationController *navigationController = segue.destinationViewController;
+    setPresetStationViewController *destViewController = (id)[[navigationController viewControllers] objectAtIndex:0];
      
- // user wants to pick a new preset station
-     if ([[segue identifier] isEqualToString:@"setPresetStation"]) {
-         PresetStationData *station = [self.radioStationsArray objectAtIndex:self.indexOfLongPressSelectedStation.row];
-         destViewController.presetStationNumberToSet = station.presetStationNumber;
+    // user wants to pick a new preset station
+    if ([[segue identifier] isEqualToString:@"setPresetStation"]) {
+        PresetStationData *station = [self.radioStationsArray objectAtIndex:self.indexOfLongPressSelectedStation.row];
+        destViewController.presetStationNumberToSet = station.presetStationNumber;
          
-         // if this station is currently playing, then pause it
-         NSLog(@"%d %d",self.indexOfLongPressSelectedStation.row, self.indexOfSelectedStation.intValue);
+        // if this station is currently playing, then pause it
+        NSLog(@"%d %d",self.indexOfLongPressSelectedStation.row, self.indexOfSelectedStation.intValue);
          
-         if (self.indexOfLongPressSelectedStation.row == self.indexOfSelectedStation.intValue) {
-             [self collectionView:self.stationCollectionView didDeselectItemAtIndexPath:self.indexOfLongPressSelectedStation];
-         }
-     }
+        if (self.indexOfLongPressSelectedStation.row == self.indexOfSelectedStation.intValue) {
+            [self collectionView:self.stationCollectionView didDeselectItemAtIndexPath:self.indexOfLongPressSelectedStation];
+        }
+    }
 }
 
 
