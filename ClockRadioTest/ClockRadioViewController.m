@@ -7,6 +7,7 @@
 //
 
 #import "ClockRadioViewController.h"
+#import "setPresetStationViewController.h"
 #import "RadioStationModel.h"
 
 @interface ClockRadioViewController ()
@@ -74,10 +75,10 @@
 {
     [super viewDidAppear:animated];
     
-    self.radioStationsArray=[self getRadioStationList];
+    self.radioStationsArray=[self getPresetStationList];
     if (self.radioStationsArray.count==0) {
         [self preloadCoreDataDefaultStations];          // if database is empty, then preload it
-        self.radioStationsArray=[self getRadioStationList];  // now get list again
+        self.radioStationsArray=[self getPresetStationList];  // now get list again
     }
     else {
         NSLog(@"There's stuff in the database so skipping the import of default data");
@@ -108,7 +109,7 @@
         CGPoint P = [gestureRecognizer locationInView:self.stationCollectionView];
         self.indexOfLongPressSelectedStation = [self.stationCollectionView indexPathForItemAtPoint:P];
         if (self.indexOfLongPressSelectedStation) {
-            [self performSegueWithIdentifier:@"editStation" sender:self];
+            [self performSegueWithIdentifier:@"setPresetStation" sender:self];
         }
         else {
             NSLog(@"couldn't find indexPath");
@@ -307,9 +308,9 @@
                                withURL:@"http://www.bbc.co.uk/worldservice/meta/tx/nb/live/eneuk.pls"
                               withIcon:@"bbcIcon.jpg"
                         withEditStatus:NO
-                      withStationNumber:@4];
+                      withStationNumber:@99];
     
-    [self insertStationWithStationName:@"User defined" withURL:nil withIcon:nil withEditStatus:YES withStationNumber:@5];
+    [self insertStationWithStationName:@"User defined" withURL:nil withIcon:nil withEditStatus:YES withStationNumber:@99];
     
     
     NSLog(@"Importing Core Data Default Values for Roles Completed!");
@@ -326,7 +327,7 @@
     return context;
 }
 
-- (NSMutableArray*) getRadioStationList {
+- (NSMutableArray*) getPresetStationList {
     NSFetchRequest *request = [[NSFetchRequest alloc] init];
     NSEntityDescription *entity = [NSEntityDescription entityForName:@"PresetStationData" inManagedObjectContext:[self managedObjectContext]];
     [request setEntity:entity];
@@ -334,6 +335,9 @@
     NSSortDescriptor *sortDescriptor = [[NSSortDescriptor alloc] initWithKey:@"presetStationNumber" ascending:YES];
     NSArray *sortDescriptors = [[NSArray alloc] initWithObjects:sortDescriptor, nil];
     [request setSortDescriptors:sortDescriptors];
+    
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"presetStationNumber < 99"];
+    [request setPredicate:predicate];
     
     NSError *error;
     NSMutableArray *mutableFetchResults = [[self.managedObjectContext executeFetchRequest:request error:&error] mutableCopy];
@@ -354,6 +358,8 @@
 
 #pragma mark - Navigation
 
+
+/*
 // In a story board-based application, you will often want to do a little preparation before navigation
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
 {
@@ -364,7 +370,7 @@
     
     // user wants to edit station, grab data on this station and send to EditStationsViewController
     
-    if ([[segue identifier] isEqualToString:@"editStation"]) {
+    if ([[segue identifier] isEqualToString:@"setPresetStation"]) {
         PresetStationData *selectedStation = [self.radioStationsArray objectAtIndex:self.indexOfLongPressSelectedStation.row];
         destViewController.stationToEdit=selectedStation;
         destViewController.editStationsDelegate = self;
@@ -389,5 +395,32 @@
     [self saveRadioStationList];
 
 }
+
+ */
+
+
+ // In a story board-based application, you will often want to do a little preparation before navigation
+ - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
+ {
+ // Get the new view controller using [segue destinationViewController].
+ // Pass the selected object to the new view controller.
+     UINavigationController *navigationController = segue.destinationViewController;
+     setPresetStationViewController *destViewController = (id)[[navigationController viewControllers] objectAtIndex:0];
+     
+ // user wants to pick a new preset station
+     if ([[segue identifier] isEqualToString:@"setPresetStation"]) {
+         PresetStationData *station = [self.radioStationsArray objectAtIndex:self.indexOfLongPressSelectedStation.row];
+         destViewController.presetStationNumberToSet = station.presetStationNumber;
+         
+         // if this station is currently playing, then pause it
+         NSLog(@"%d %d",self.indexOfLongPressSelectedStation.row, self.indexOfSelectedStation.intValue);
+         
+         if (self.indexOfLongPressSelectedStation.row == self.indexOfSelectedStation.intValue) {
+             [self collectionView:self.stationCollectionView didDeselectItemAtIndexPath:self.indexOfLongPressSelectedStation];
+         }
+     }
+}
+
+
 
 @end

@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		49F80D3A182BF86800F33515 /* PresetStationData.m in Sources */ = {isa = PBXBuildFile; fileRef = 49F80D39182BF86800F33515 /* PresetStationData.m */; };
+		49F80D3D182C160700F33515 /* setPresetStationViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 49F80D3C182C160700F33515 /* setPresetStationViewController.m */; };
 		7934262118231EA3004BC93B /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7934262018231EA3004BC93B /* Foundation.framework */; };
 		7934262318231EA3004BC93B /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7934262218231EA3004BC93B /* CoreGraphics.framework */; };
 		7934262518231EA3004BC93B /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7934262418231EA3004BC93B /* UIKit.framework */; };
@@ -48,6 +49,8 @@
 /* Begin PBXFileReference section */
 		49F80D38182BF86800F33515 /* PresetStationData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PresetStationData.h; sourceTree = "<group>"; };
 		49F80D39182BF86800F33515 /* PresetStationData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PresetStationData.m; sourceTree = "<group>"; };
+		49F80D3B182C160700F33515 /* setPresetStationViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = setPresetStationViewController.h; sourceTree = "<group>"; };
+		49F80D3C182C160700F33515 /* setPresetStationViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = setPresetStationViewController.m; sourceTree = "<group>"; };
 		7934261D18231EA3004BC93B /* ClockRadioTest.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ClockRadioTest.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		7934262018231EA3004BC93B /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		7934262218231EA3004BC93B /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -143,6 +146,8 @@
 		7934262818231EA3004BC93B /* ClockRadioTest */ = {
 			isa = PBXGroup;
 			children = (
+				49F80D3B182C160700F33515 /* setPresetStationViewController.h */,
+				49F80D3C182C160700F33515 /* setPresetStationViewController.m */,
 				798F0CCE182B20F500C7B954 /* RadioStationModel.h */,
 				798F0CCF182B20F500C7B954 /* RadioStationModel.m */,
 				7934265A18233B7E004BC93B /* ClockRadioViewController.h */,
@@ -302,6 +307,7 @@
 				798F0CD0182B20F500C7B954 /* RadioStationModel.m in Sources */,
 				7934263618231EA3004BC93B /* ClockRadioTest.xcdatamodeld in Sources */,
 				7934265C18233B7E004BC93B /* ClockRadioViewController.m in Sources */,
+				49F80D3D182C160700F33515 /* setPresetStationViewController.m in Sources */,
 				7934265F1823571B004BC93B /* EditStationsViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

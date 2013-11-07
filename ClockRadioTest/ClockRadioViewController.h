@@ -11,8 +11,6 @@
 #import <MediaPlayer/MediaPlayer.h>
 
 #import "PresetStationData.h"
-#import "EditStationsViewController.h"
 
-
-@interface ClockRadioViewController : UIViewController <UICollectionViewDataSource, UICollectionViewDelegate, UIGestureRecognizerDelegate, EditStationsDelegate>
+@interface ClockRadioViewController : UIViewController <UICollectionViewDataSource, UICollectionViewDelegate, UIGestureRecognizerDelegate>
 @end
