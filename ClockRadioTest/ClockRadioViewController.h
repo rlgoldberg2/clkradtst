@@ -10,7 +10,7 @@
 #import <AVFoundation/AVFoundation.h>
 #import <MediaPlayer/MediaPlayer.h>
 
-#import "RadioStationData.h"
+#import "PresetStationData.h"
 #import "EditStationsViewController.h"
 
 

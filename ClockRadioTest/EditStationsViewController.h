@@ -7,13 +7,13 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "RadioStationData.h"
+#import "PresetStationData.h"
 
 @protocol EditStationsDelegate;
 
 @interface EditStationsViewController : UIViewController
 
-@property (nonatomic, strong) RadioStationData *stationToEdit;
+@property (nonatomic, strong) PresetStationData *stationToEdit;
 @property (nonatomic, weak) id<EditStationsDelegate> editStationsDelegate;
 
 @end

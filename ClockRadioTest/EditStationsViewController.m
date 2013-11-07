@@ -34,10 +34,10 @@
 	// Do any additional setup after loading the view.
     // initialize text fields if the user selected a segue to edit
     if (self.stationToEdit)  {
-        self.nameTextField.text = self.stationToEdit.name;
-        self.urlStreamTextField.text = self.stationToEdit.url;
-        self.urlIconTextField.text = self.stationToEdit.icon;
-        self.displayOrderTextField.text=[NSString stringWithFormat:@"%@", self.stationToEdit.displayOrder];
+        self.nameTextField.text = self.stationToEdit.stationName;
+        self.urlStreamTextField.text = self.stationToEdit.stationURL;
+        self.urlIconTextField.text = self.stationToEdit.stationIcon;
+        self.displayOrderTextField.text=[NSString stringWithFormat:@"%@", self.stationToEdit.presetStationNumber];
     }
     else {
         self.nameTextField.text=nil;
@@ -63,11 +63,11 @@
     
     // if user is editing station, then update name,url,icon and resave
     if (self.stationToEdit) {
-        self.stationToEdit.name = self.nameTextField.text;
-        self.stationToEdit.url = self.urlStreamTextField.text;
-        self.stationToEdit.icon = self.urlIconTextField.text;
+        self.stationToEdit.stationName = self.nameTextField.text;
+        self.stationToEdit.stationURL = self.urlStreamTextField.text;
+        self.stationToEdit.stationIcon = self.urlIconTextField.text;
         newDisplayOrder = [self.displayOrderTextField.text intValue];
-        oldDisplayOrder = [self.stationToEdit.displayOrder integerValue];
+        oldDisplayOrder = [self.stationToEdit.presetStationNumber integerValue];
         if (newDisplayOrder != oldDisplayOrder) {
             [self.editStationsDelegate displayOrderHasChanged:oldDisplayOrder to:newDisplayOrder];
         }
@@ -76,15 +76,15 @@
     
     // if user is adding station, then set all fields and save
     else {
-        RadioStationData *newStation = [NSEntityDescription
-                                        insertNewObjectForEntityForName:@"RadioStationData"
+        PresetStationData *newStation = [NSEntityDescription
+                                        insertNewObjectForEntityForName:@"PresetStationData"
                                         inManagedObjectContext:context];
         
-        newStation.name = self.nameTextField.text;
-        newStation.url = self.urlStreamTextField.text;
-        newStation.icon = self.urlIconTextField.text;
+        newStation.stationName = self.nameTextField.text;
+        newStation.stationURL = self.urlStreamTextField.text;
+        newStation.stationIcon = self.urlIconTextField.text;
         int displayOrderInt = [self.displayOrderTextField.text intValue];
-        newStation.displayOrder = [NSNumber numberWithInteger:displayOrderInt];
+        newStation.presetStationNumber = [NSNumber numberWithInteger:displayOrderInt];
         newStation.isEditable = [NSNumber numberWithBool:YES];
     }
     

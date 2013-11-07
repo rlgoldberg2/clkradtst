@@ -9,11 +9,11 @@
 #import <Foundation/Foundation.h>
 #import <AVFoundation/AVFoundation.h>
 
-#import "RadioStationData.h"
+#import "PresetStationData.h"
 
 @interface RadioStationModel : NSObject
 
-+(AVPlayer *) radioStationPlay: (RadioStationData *)station;
++(AVPlayer *) radioStationPlay: (PresetStationData *)station;
 +(void) radioStationPlayPause: (AVPlayer *) player;
 
 @end

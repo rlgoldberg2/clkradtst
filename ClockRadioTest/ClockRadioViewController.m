@@ -171,20 +171,20 @@
     // Configure the cell...
     cell.selectedBackgroundView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"RedBorder.png"]];
 
-    RadioStationData *info=[self.radioStationsArray objectAtIndex:indexPath.row];
+    PresetStationData *info=[self.radioStationsArray objectAtIndex:indexPath.row];
     UILabel *radioLabel = (UILabel *) [cell viewWithTag:100];
     UIImageView *radioImage = (UIImageView *) [cell viewWithTag:200];
 
     // if there was an icon specified, and it's not sleep mode, then display icon and hide label
-    if (info.icon.length > 0 && [self.displayMode intValue] != DISPLAY_MODE_SLEEP) {
-        radioImage.image = [UIImage imageNamed:info.icon];
+    if (info.stationIcon.length > 0 && [self.displayMode intValue] != DISPLAY_MODE_SLEEP) {
+        radioImage.image = [UIImage imageNamed:info.stationIcon];
         radioImage.hidden = NO;
         radioLabel.hidden = YES;
     }
     
     // otherwise, display label and hide icon
     else {
-        radioLabel.text = info.name;
+        radioLabel.text = info.stationName;
         radioImage.hidden = YES;
         radioLabel.hidden = NO;
         radioLabel.numberOfLines = 0;
@@ -207,7 +207,7 @@
     else {
         //otherwise, then save and play the currently selected station
         self.indexOfSelectedStation = [NSNumber numberWithInt:indexPath.row];
-        RadioStationData *station = [self.radioStationsArray objectAtIndex:indexPath.row];
+        PresetStationData *station = [self.radioStationsArray objectAtIndex:indexPath.row];
         self.streamingPlayer = [RadioStationModel radioStationPlay:station];
     }
 }
@@ -220,27 +220,6 @@
     NSLog(@"deselected item %d", indexPath.row);
     
 }
-
-/*
-- (void) tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    if (editStatus) {   // if it's editing mode, then edit the current radio station
-        RadioStationData *row = [self.radioStationsArray objectAtIndex:indexPath.row];
-        
-        NSLog(@"row %d iseditable %d", indexPath.row, [row.isEditable integerValue]);
-        
-        if ([row.isEditable integerValue]) {
-            [self performSegueWithIdentifier:@"editStation" sender:self];
-        }
-    }
-    
-    // if it's not in editing mode, then select the current row
-    else {
-        selectedRow=indexPath.row;
-        [tableView reloadData];
-    }
-}
-*/
 
 
 #pragma mark set screen brightness
@@ -278,19 +257,19 @@
                              withURL: (NSString *)url
                             withIcon: (NSString *)icon
                       withEditStatus: (BOOL)editStatus
-                    withDisplayOrder: (NSNumber *)displayOrder
+                    withStationNumber: (NSNumber *)stationNumber
 {
     NSManagedObjectContext *managedObjectContext = [self managedObjectContext];
     
-    RadioStationData *station =
-    [NSEntityDescription insertNewObjectForEntityForName:@"RadioStationData"
+    PresetStationData *station =
+    [NSEntityDescription insertNewObjectForEntityForName:@"PresetStationData"
                                   inManagedObjectContext:managedObjectContext];
     
-    station.name = stationName;
-    station.url=url;
-    station.icon=icon;
+    station.stationName = stationName;
+    station.stationURL=url;
+    station.stationIcon=icon;
     station.isEditable=[NSNumber numberWithBool: editStatus];
-    station.displayOrder=displayOrder;
+    station.presetStationNumber=stationNumber;
     
     [self.managedObjectContext save:nil];
 }
@@ -302,27 +281,27 @@
                                withURL:@"http://den-a.plr.liquidcompass.net/pls/KIROAMMP3.pls"
                               withIcon:@"espnIcon.png"
                         withEditStatus:YES
-                      withDisplayOrder:@3];
+                      withStationNumber:@3];
     
     [self insertStationWithStationName:@"CBC News"
                                withURL:@"http://playerservices.streamtheworld.com/pls/CBC_R1_TOR_H.pls"
                               withIcon:@"cbcIcon.jpg"
                         withEditStatus:NO
-                      withDisplayOrder:@1];
+                      withStationNumber:@1];
     
     [self insertStationWithStationName:@"NPR News"
                                withURL:@"http://152.2.63.68:8000/listen.pls"
                               withIcon:@"nprIcon.jpg"
                         withEditStatus:YES
-                      withDisplayOrder:@2];
+                      withStationNumber:@2];
     
     [self insertStationWithStationName:@"BBC News"
                                withURL:@"http://www.bbc.co.uk/worldservice/meta/tx/nb/live/eneuk.pls"
                               withIcon:@"bbcIcon.jpg"
                         withEditStatus:NO
-                      withDisplayOrder:@4];
+                      withStationNumber:@4];
     
-    [self insertStationWithStationName:@"User defined" withURL:nil withIcon:nil withEditStatus:YES withDisplayOrder:@5];
+    [self insertStationWithStationName:@"User defined" withURL:nil withIcon:nil withEditStatus:YES withStationNumber:@5];
     
     
     NSLog(@"Importing Core Data Default Values for Roles Completed!");
@@ -341,10 +320,10 @@
 
 - (NSMutableArray*) getRadioStationList {
     NSFetchRequest *request = [[NSFetchRequest alloc] init];
-    NSEntityDescription *entity = [NSEntityDescription entityForName:@"RadioStationData" inManagedObjectContext:[self managedObjectContext]];
+    NSEntityDescription *entity = [NSEntityDescription entityForName:@"PresetStationData" inManagedObjectContext:[self managedObjectContext]];
     [request setEntity:entity];
     
-    NSSortDescriptor *sortDescriptor = [[NSSortDescriptor alloc] initWithKey:@"displayOrder" ascending:YES];
+    NSSortDescriptor *sortDescriptor = [[NSSortDescriptor alloc] initWithKey:@"presetStationNumber" ascending:YES];
     NSArray *sortDescriptors = [[NSArray alloc] initWithObjects:sortDescriptor, nil];
     [request setSortDescriptors:sortDescriptors];
     
@@ -378,7 +357,7 @@
     // user wants to edit station, grab data on this station and send to EditStationsViewController
     
     if ([[segue identifier] isEqualToString:@"editStation"]) {
-        RadioStationData *selectedStation = [self.radioStationsArray objectAtIndex:self.indexOfLongPressSelectedStation.row];
+        PresetStationData *selectedStation = [self.radioStationsArray objectAtIndex:self.indexOfLongPressSelectedStation.row];
         destViewController.stationToEdit=selectedStation;
         destViewController.editStationsDelegate = self;
     }
@@ -389,15 +368,15 @@
     NSLog(@"the new display changed from: %d to %d",oldDisplayOrder, newDisplayOrder);
 
     // first remove item from local array and move it to new place
-    RadioStationData *item = [self.radioStationsArray objectAtIndex:oldDisplayOrder-1];
+    PresetStationData *item = [self.radioStationsArray objectAtIndex:oldDisplayOrder-1];
     [self.radioStationsArray removeObjectAtIndex:oldDisplayOrder-1];
     [self.radioStationsArray insertObject:item atIndex:newDisplayOrder-1];
     
     // then setup a new display order based on the current order of the items
     int i = 1;
-    for(RadioStationData *row in self.radioStationsArray) {
-        row.displayOrder = [NSNumber numberWithInt:i++];
-        NSLog(@"Station %@ order %@",row.name, row.displayOrder);
+    for(PresetStationData *row in self.radioStationsArray) {
+        row.presetStationNumber = [NSNumber numberWithInt:i++];
+        NSLog(@"Station %@ order %@",row.stationName, row.presetStationNumber);
     }
     [self saveRadioStationList];
 

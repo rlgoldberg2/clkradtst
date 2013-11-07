@@ -17,9 +17,9 @@
 
 BOOL isPlaying=NO;
 
-+(AVPlayer *) radioStationPlay:(RadioStationData *)station
++(AVPlayer *) radioStationPlay:(PresetStationData *)station
 {
-    NSURL *radioStationURL = [NSURL URLWithString:station.url];
+    NSURL *radioStationURL = [NSURL URLWithString:station.stationURL];
     
     AVPlayerItem *playerItem = [AVPlayerItem playerItemWithURL:radioStationURL];
     
