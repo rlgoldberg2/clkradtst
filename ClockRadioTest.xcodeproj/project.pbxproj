@@ -28,6 +28,7 @@
 		7934265F1823571B004BC93B /* EditStationsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 7934265E1823571B004BC93B /* EditStationsViewController.m */; };
 		793A4FB8182954FD0002DF18 /* RedBorder.png in Resources */ = {isa = PBXBuildFile; fileRef = 793A4FB7182954FD0002DF18 /* RedBorder.png */; };
 		7949E2BF182E5193007ACBF2 /* PresetStationData.m in Sources */ = {isa = PBXBuildFile; fileRef = 7949E2BE182E5193007ACBF2 /* PresetStationData.m */; };
+		7949E2C2182E5C8B007ACBF2 /* playTVstationViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 7949E2C1182E5C8B007ACBF2 /* playTVstationViewController.m */; };
 		795B1DAC182524FC00EB6C6D /* bbcIcon.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 795B1DA8182524FC00EB6C6D /* bbcIcon.jpg */; };
 		795B1DAD182524FC00EB6C6D /* cbcIcon.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 795B1DA9182524FC00EB6C6D /* cbcIcon.jpg */; };
 		795B1DAE182524FC00EB6C6D /* espnIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = 795B1DAA182524FC00EB6C6D /* espnIcon.png */; };
@@ -75,6 +76,8 @@
 		793A4FB7182954FD0002DF18 /* RedBorder.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = RedBorder.png; sourceTree = "<group>"; };
 		7949E2BD182E5193007ACBF2 /* PresetStationData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PresetStationData.h; sourceTree = "<group>"; };
 		7949E2BE182E5193007ACBF2 /* PresetStationData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PresetStationData.m; sourceTree = "<group>"; };
+		7949E2C0182E5C8B007ACBF2 /* playTVstationViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = playTVstationViewController.h; sourceTree = "<group>"; };
+		7949E2C1182E5C8B007ACBF2 /* playTVstationViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = playTVstationViewController.m; sourceTree = "<group>"; };
 		795B1DA8182524FC00EB6C6D /* bbcIcon.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = bbcIcon.jpg; sourceTree = "<group>"; };
 		795B1DA9182524FC00EB6C6D /* cbcIcon.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = cbcIcon.jpg; sourceTree = "<group>"; };
 		795B1DAA182524FC00EB6C6D /* espnIcon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = espnIcon.png; sourceTree = "<group>"; };
@@ -146,6 +149,8 @@
 		7934262818231EA3004BC93B /* ClockRadioTest */ = {
 			isa = PBXGroup;
 			children = (
+				7949E2C0182E5C8B007ACBF2 /* playTVstationViewController.h */,
+				7949E2C1182E5C8B007ACBF2 /* playTVstationViewController.m */,
 				49F80D3B182C160700F33515 /* setPresetStationViewController.h */,
 				49F80D3C182C160700F33515 /* setPresetStationViewController.m */,
 				798F0CCE182B20F500C7B954 /* RadioStationModel.h */,
@@ -305,6 +310,7 @@
 				7934262F18231EA3004BC93B /* main.m in Sources */,
 				798F0CD0182B20F500C7B954 /* RadioStationModel.m in Sources */,
 				7934263618231EA3004BC93B /* ClockRadioTest.xcdatamodeld in Sources */,
+				7949E2C2182E5C8B007ACBF2 /* playTVstationViewController.m in Sources */,
 				7934265C18233B7E004BC93B /* ClockRadioViewController.m in Sources */,
 				7949E2BF182E5193007ACBF2 /* PresetStationData.m in Sources */,
 				49F80D3D182C160700F33515 /* setPresetStationViewController.m in Sources */,

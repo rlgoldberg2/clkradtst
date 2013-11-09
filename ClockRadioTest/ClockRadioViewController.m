@@ -8,6 +8,7 @@
 
 #import "ClockRadioViewController.h"
 #import "setPresetStationViewController.h"
+#import "playTVstationViewController.h"
 #import "RadioStationModel.h"
 
 @interface ClockRadioViewController ()
@@ -217,7 +218,17 @@
         //otherwise, then save and play the newly selected station
         self.indexOfSelectedStation = [NSNumber numberWithInt:indexPath.row];
         PresetStationData *station = [self.radioStationsArray objectAtIndex:indexPath.row];
-        self.streamingPlayer = [RadioStationModel radioStationPlay:station];
+
+        // play TV station
+        if ([station.mediaType isEqualToString:@"TV"]) {
+            [self performSegueWithIdentifier:@"playTVstation" sender:self];
+            NSLog(@"back from segue");
+        }
+        
+        // play radio station
+        else {
+            self.streamingPlayer = [RadioStationModel radioStationPlay:station];
+        }
     }
 }
 
@@ -390,10 +401,10 @@
     // Get the new view controller using [segue destinationViewController].
     // Pass the selected object to the new view controller.
     UINavigationController *navigationController = segue.destinationViewController;
-    setPresetStationViewController *destViewController = (id)[[navigationController viewControllers] objectAtIndex:0];
-     
+    
     // user wants to pick a new preset station
     if ([[segue identifier] isEqualToString:@"setPresetStation"]) {
+        setPresetStationViewController *destViewController = (id)[[navigationController viewControllers] objectAtIndex:0];
         PresetStationData *station = [self.radioStationsArray objectAtIndex:self.indexOfLongPressSelectedStation.row];
         destViewController.presetStationToChange = station;
          
@@ -404,6 +415,20 @@
             [self collectionView:self.stationCollectionView didDeselectItemAtIndexPath:self.indexOfLongPressSelectedStation];
         }
     }
+    
+    // user wants to play a tv station
+    if ([[segue identifier] isEqualToString:@"playTVstation"]) {
+        playTVstationViewController *destViewController = (id)[[navigationController viewControllers] objectAtIndex:0];
+        PresetStationData *station = [self.radioStationsArray objectAtIndex:self.indexOfSelectedStation.intValue];
+        destViewController.tvURLtoPlay = [NSURL URLWithString:station.stationURL];
+    }
+    
+}
+
+- (IBAction)returnfromTV:(UIStoryboardSegue *)unwindSegue
+{
+    self.indexOfSelectedStation = [NSNumber numberWithInt:-1];
+
 }
 
 
