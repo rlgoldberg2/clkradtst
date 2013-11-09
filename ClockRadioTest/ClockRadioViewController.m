@@ -266,7 +266,8 @@
                              withURL: (NSString *)url
                             withIcon: (NSString *)icon
                       withEditStatus: (BOOL)editStatus
-                    withStationNumber: (NSNumber *)stationNumber
+                   withStationNumber: (NSNumber *)stationNumber
+                       withMediaType: (NSString *)mediaType
 {
     NSManagedObjectContext *managedObjectContext = [self managedObjectContext];
     
@@ -279,6 +280,7 @@
     station.stationIcon=icon;
     station.isEditable=[NSNumber numberWithBool: editStatus];
     station.presetStationNumber=stationNumber;
+    station.mediaType=mediaType;
     
     [self.managedObjectContext save:nil];
 }
@@ -289,29 +291,52 @@
     [self insertStationWithStationName:@"ESPN"
                                withURL:@"http://den-a.plr.liquidcompass.net/pls/KIROAMMP3.pls"
                               withIcon:@"espnIcon.png"
-                        withEditStatus:YES
-                      withStationNumber:@3];
+                        withEditStatus:NO
+                      withStationNumber:@1
+                         withMediaType:@"Radio"];
     
     [self insertStationWithStationName:@"CBC News"
                                withURL:@"http://playerservices.streamtheworld.com/pls/CBC_R1_TOR_H.pls"
                               withIcon:@"cbcIcon.jpg"
                         withEditStatus:NO
-                      withStationNumber:@1];
+                      withStationNumber:@2
+                         withMediaType:@"Radio"];
     
     [self insertStationWithStationName:@"NPR News"
                                withURL:@"http://152.2.63.68:8000/listen.pls"
                               withIcon:@"nprIcon.jpg"
-                        withEditStatus:YES
-                      withStationNumber:@2];
+                        withEditStatus:NO
+                      withStationNumber:@3
+                         withMediaType:@"Radio"];
     
     [self insertStationWithStationName:@"BBC News"
                                withURL:@"http://www.bbc.co.uk/worldservice/meta/tx/nb/live/eneuk.pls"
                               withIcon:@"bbcIcon.jpg"
                         withEditStatus:NO
-                      withStationNumber:@99];
+                      withStationNumber:@99
+                          withMediaType:@"Radio"];
     
-    [self insertStationWithStationName:@"User defined" withURL:nil withIcon:nil withEditStatus:YES withStationNumber:@99];
+    [self insertStationWithStationName:@"Bloomberg TV"
+                               withURL:@"http://live.bltvios.com.edgesuite.net/oza2w6q8gX9WSkRx13bskffWIuyf/BnazlkNDpCIcD-QkfyZCQKlRiiFnVa5I/master.m3u8"
+                              withIcon:nil
+                        withEditStatus:NO
+                     withStationNumber:@4
+                         withMediaType:@"TV"];
     
+    [self insertStationWithStationName:@"Deutsche Welle"
+                               withURL:@"http://www.metafilegenerator.de/DWelle/tv-asia/ios/master.m3u8"
+                              withIcon:nil
+                        withEditStatus:NO
+                     withStationNumber:@5
+                         withMediaType:@"TV"];
+
+    [self insertStationWithStationName:@"CCTV — China"
+                               withURL:@"http://cctv.lsops.net/live/cctv_en_hls.smil/playlist.m3u8"
+                              withIcon:nil
+                        withEditStatus:NO
+                     withStationNumber:@99
+                         withMediaType:@"TV"];
+
     
     NSLog(@"Importing Core Data Default Values for Roles Completed!");
 }
@@ -370,7 +395,7 @@
     // user wants to pick a new preset station
     if ([[segue identifier] isEqualToString:@"setPresetStation"]) {
         PresetStationData *station = [self.radioStationsArray objectAtIndex:self.indexOfLongPressSelectedStation.row];
-        destViewController.presetStationNumberToSet = station.presetStationNumber;
+        destViewController.presetStationToChange = station;
          
         // if this station is currently playing, then pause it
         NSLog(@"%d %d",self.indexOfLongPressSelectedStation.row, self.indexOfSelectedStation.intValue);

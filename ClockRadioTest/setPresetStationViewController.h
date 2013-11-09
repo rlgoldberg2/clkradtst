@@ -7,8 +7,9 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "PresetStationData.h"
 
 @interface setPresetStationViewController : UITableViewController <UITableViewDelegate, UITableViewDataSource>
 
-@property (strong, nonatomic) NSNumber *presetStationNumberToSet;
+@property (strong, nonatomic) PresetStationData *presetStationToChange;
 @end

@@ -2,7 +2,7 @@
 <model userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="3400" systemVersion="13A603" minimumToolsVersion="Automatic" macOSVersion="Automatic" iOSVersion="Automatic">
     <entity name="PresetStationData" representedClassName="RadioStationData" syncable="YES">
         <attribute name="isEditable" optional="YES" attributeType="Boolean" syncable="YES"/>
-        <attribute name="mediaType" optional="YES" attributeType="Integer 16" syncable="YES"/>
+        <attribute name="mediaType" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="presetStationNumber" optional="YES" attributeType="Integer 16" defaultValueString="0" syncable="YES"/>
         <attribute name="stationIcon" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="stationName" optional="YES" attributeType="String" syncable="YES"/>

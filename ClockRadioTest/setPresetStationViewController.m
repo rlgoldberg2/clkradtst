@@ -11,6 +11,8 @@
 
 @interface setPresetStationViewController ()
 @property (strong, nonatomic) NSMutableArray *stationsArray;
+@property (strong, nonatomic) NSFetchedResultsController *frController;
+@property (strong, nonatomic) NSManagedObjectContext *moContext;
 
 @end
 
@@ -29,6 +31,21 @@
 {
     [super viewDidLoad];
 
+    self.moContext = [self setupManagedObjectContext];
+    self.frController = [self setupFetchedResultsController];
+    
+    NSError *error;
+    if (![self.frController performFetch:&error]) {
+        /*
+         Replace this implementation with code to handle the error appropriately.
+         
+         abort() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
+         */
+        NSLog(@"Unresolved error %@, %@", error, [error userInfo]);
+        abort();
+    }
+
+    
     // Uncomment the following line to preserve selection between presentations.
     // self.clearsSelectionOnViewWillAppear = NO;
  
@@ -40,7 +57,7 @@
 {
     [super viewWillAppear:animated];
     
-    self.stationsArray=[self getCompleteStationList];
+//    self.stationsArray=[self getCompleteStationList];
 
 }
 
@@ -58,17 +75,48 @@
 
 #pragma mark - Table view data source
 
-- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
-{
-    // Return the number of sections.
-    return 1;
+/*
+ The data source methods are handled primarily by the fetch results controller
+ */
+
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
+    
+    NSLog(@"%d sections",[[self.frController sections] count]);
+    return [[self.frController sections] count];
 }
+
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
     // Return the number of rows in the section.
-    NSLog(@"%d stations",self.stationsArray.count);
-    return self.stationsArray.count;
+    id <NSFetchedResultsSectionInfo> sectionInfo = [[self.frController sections] objectAtIndex:section];
+    NSLog(@"%d rows", [sectionInfo numberOfObjects]);
+    return [sectionInfo numberOfObjects];
+    
+}
+
+
+// Customize the appearance of table view cells.
+- (void)configureCell:(UITableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath {
+    
+    // Configure the cell to show the book's title
+    PresetStationData *station = [self.frController objectAtIndexPath:indexPath];
+
+    int preset = station.presetStationNumber.intValue;
+
+    cell.textLabel.text = station.stationName;
+    cell.imageView.image = [UIImage imageNamed:station.stationIcon];
+    
+    // if this station is already assigned to a preset station, then dim it and make it unselectable
+    if (preset < 99) {
+        cell.detailTextLabel.text = [NSString stringWithFormat:@"preset #%d", preset];
+        cell.userInteractionEnabled = NO;
+        cell.contentView.alpha = 0.2;
+    }
+    else {
+        cell.detailTextLabel.text = @" ";
+    }
+
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -76,52 +124,35 @@
     static NSString *CellIdentifier = @"Station";
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier forIndexPath:indexPath];
     
-    PresetStationData *station=[self.stationsArray objectAtIndex:indexPath.row];
+    // Configure the cell.
+    [self configureCell:cell atIndexPath:indexPath];
     
-    int preset = station.presetStationNumber.intValue;
-    
-    cell.textLabel.text = station.stationName;
-    cell.imageView.image = [UIImage imageNamed:station.stationIcon];
-
-    // if this station is already assigned to a preset station, then dim it and make it unselectable
-    if (preset < 99) {
-        cell.detailTextLabel.text = [NSString stringWithFormat:@"preset #%d", preset];
-        cell.userInteractionEnabled = NO;
-        cell.contentView.alpha = 0.5;
-    }
-    else {
-        cell.detailTextLabel.text = @" ";
-    }
     return cell;
 }
 
+- (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section {
+    
+    // Display the authors' names as section headings.
+    return [[[self.frController sections] objectAtIndex:section] name];
+}
+
+
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    
 
-    // first find the station that currently has this preset station value and reset the preset to 99 (i.e. no preset)
-    int i=0;
-    PresetStationData *station;
+    // user has selected a new station for this preset
+    // first, grab the preset station number of the current preset
+    int presetNumber = [self.presetStationToChange.presetStationNumber intValue];
     
-    for (station in self.stationsArray) {
-        if (station.presetStationNumber == self.presetStationNumberToSet) {
-            break;
-        }
-        i++;
-    }
+    // then, reset the preset station number so that this station no longer appears on the preset list
+    self.presetStationToChange.presetStationNumber = @99;
     
-    // i currently points to the station that currently has this preset station value
-    station.presetStationNumber = [NSNumber numberWithInt:99];
-    [self.stationsArray replaceObjectAtIndex:i withObject:(id) station];
-
-    // now get the new station that was selected and save it with this preset
-    PresetStationData *newPresetStation=[self.stationsArray objectAtIndex:indexPath.row];
-    newPresetStation.presetStationNumber = self.presetStationNumberToSet;
-    [self.stationsArray replaceObjectAtIndex:indexPath.row withObject:newPresetStation];
+    // finally, set the currently selected station to a preset
+    PresetStationData *newPresetStation = [self.frController objectAtIndexPath:indexPath];
+    newPresetStation.presetStationNumber = [NSNumber numberWithInt:presetNumber];
     
     [self saveStationList];
     [[self presentingViewController] dismissViewControllerAnimated:YES completion:nil];
-
     
 }
 
@@ -179,7 +210,7 @@
 
 #pragma mark -- user inserted methods for accessing core data
 
-- (NSManagedObjectContext *)managedObjectContext {
+- (NSManagedObjectContext *)setupManagedObjectContext {
     NSManagedObjectContext *context = nil;
     id delegate = [[UIApplication sharedApplication] delegate];
     if ([delegate performSelector:@selector(managedObjectContext)]) {
@@ -188,26 +219,29 @@
     return context;
 }
 
-- (NSMutableArray*) getCompleteStationList {
-    NSFetchRequest *request = [[NSFetchRequest alloc] init];
-    NSEntityDescription *entity = [NSEntityDescription entityForName:@"PresetStationData" inManagedObjectContext:[self managedObjectContext]];
-    [request setEntity:entity];
+
+-(NSFetchedResultsController *) setupFetchedResultsController
+{
+    // Create and configure a fetch request with the Book entity.
+    NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init];
+    NSEntityDescription *entity = [NSEntityDescription entityForName:@"PresetStationData" inManagedObjectContext:self.moContext];
+    [fetchRequest setEntity:entity];
     
-    NSSortDescriptor *sortDescriptor = [[NSSortDescriptor alloc] initWithKey:@"stationName" ascending:YES];
-    NSArray *sortDescriptors = [[NSArray alloc] initWithObjects:sortDescriptor, nil];
-    [request setSortDescriptors:sortDescriptors];
+    // Create the sort descriptors array.
+    NSSortDescriptor *sortByMediaType = [[NSSortDescriptor alloc] initWithKey:@"mediaType" ascending:YES];
+    NSSortDescriptor *sortByStationName = [[NSSortDescriptor alloc] initWithKey:@"stationName" ascending:YES];
+    NSArray *sortDescriptors = @[sortByMediaType,sortByStationName];
+    [fetchRequest setSortDescriptors:sortDescriptors];
     
-    NSError *error;
-    NSMutableArray *mutableFetchResults = [[self.managedObjectContext executeFetchRequest:request error:&error] mutableCopy];
-    if (mutableFetchResults == nil) {
-        // Handle the error.
-    }
-    
-    return mutableFetchResults;
+    // Create and initialize the fetch results controller.
+    NSFetchedResultsController *frc = [[NSFetchedResultsController alloc] initWithFetchRequest:fetchRequest managedObjectContext:self.moContext sectionNameKeyPath:@"mediaType" cacheName:@"Root"];
+
+    return frc;
 }
 
+
 - (void) saveStationList {
-    NSManagedObjectContext *context = [self managedObjectContext];
+    NSManagedObjectContext *context = self.moContext;
     
     NSError *error;
     [context save:&error];
