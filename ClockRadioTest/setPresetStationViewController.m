@@ -7,6 +7,7 @@
 //
 
 #import "setPresetStationViewController.h"
+#import "EditStationsViewController.h"
 #import "PresetStationData.h"
 
 @interface setPresetStationViewController ()
@@ -50,14 +51,12 @@
     // self.clearsSelectionOnViewWillAppear = NO;
  
     // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-    // self.navigationItem.rightBarButtonItem = self.editButtonItem;
+    self.navigationItem.rightBarButtonItem = self.editButtonItem;
 }
 
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
-    
-//    self.stationsArray=[self getCompleteStationList];
 
 }
 
@@ -196,7 +195,7 @@
 }
 */
 
-/*
+
 #pragma mark - Navigation
 
 // In a story board-based application, you will often want to do a little preparation before navigation
@@ -204,9 +203,20 @@
 {
     // Get the new view controller using [segue destinationViewController].
     // Pass the selected object to the new view controller.
-}
 
- */
+    EditStationsViewController *destViewController = segue.destinationViewController;
+
+    // user wants to add a new station
+    if ([[segue identifier] isEqualToString:@"addStation"]) {
+        destViewController.stationToEdit = nil;
+    }
+ 
+    // user wants to edit the currently selected station
+    if ([[segue identifier] isEqualToString:@"editStation"]) {
+        
+    }
+ 
+}
 
 #pragma mark -- user inserted methods for accessing core data
 
