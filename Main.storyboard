@@ -200,7 +200,6 @@
                         <barButtonItem key="leftBarButtonItem" style="done" systemItem="done" id="wpK-MV-MYa">
                             <connections>
                                 <action selector="doneButton:" destination="cHb-kY-58W" id="C2Y-RF-o09"/>
-                                <segue destination="dh6-pb-U8e" kind="unwind" unwindAction="returnfromTV:" id="6JH-dv-iet"/>
                             </connections>
                         </barButtonItem>
                     </navigationItem>
@@ -209,7 +208,6 @@
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="JOY-lP-z0i" userLabel="First Responder" sceneMemberID="firstResponder"/>
-                <exit id="dh6-pb-U8e" userLabel="Exit" sceneMemberID="exit"/>
             </objects>
             <point key="canvasLocation" x="1135" y="372"/>
         </scene>

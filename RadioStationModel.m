@@ -42,17 +42,17 @@ BOOL isPlaying=NO;
     return player;
 }
 
-+(void) radioStationPlayPause:(AVPlayer *)player
++(void) radioStationPause:(AVPlayer *)player
 {
-    if (isPlaying) {
         [player pause];
-        isPlaying = NO;
-    }
-    else {
-        [player play];
-        isPlaying = YES;
-    }
 }
+
++(void) radioStationResume:(AVPlayer *)player
+{
+    [player play];
+}
+
+
 
 -(void)observeValueForKeyPath:(NSString *)keyPath
                      ofObject:(id)object

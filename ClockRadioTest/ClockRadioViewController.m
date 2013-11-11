@@ -221,8 +221,16 @@
 
         // play TV station
         if ([station.mediaType isEqualToString:@"TV"]) {
+            
+            // segue to view controller to play tv station
             [self performSegueWithIdentifier:@"playTVstation" sender:self];
             NSLog(@"back from segue");
+
+            // deselect button now so that when the user is done playing tv station, it's already deselected
+            // the tv differs from radio in that you are not toggling on/off
+            [self.stationCollectionView deselectItemAtIndexPath:indexPath animated:YES];
+            [self collectionView:self.stationCollectionView didDeselectItemAtIndexPath:indexPath];
+
         }
         
         // play radio station
@@ -235,7 +243,7 @@
 - (void) collectionView:(UICollectionView *)collectionView didDeselectItemAtIndexPath:(NSIndexPath *)indexPath
 {
     self.indexOfSelectedStation = [NSNumber numberWithInt:-1];
-    [RadioStationModel radioStationPlayPause:self.streamingPlayer];
+    [RadioStationModel radioStationPause:self.streamingPlayer];
     
     NSLog(@"deselected item %d", indexPath.row);
     
@@ -423,12 +431,6 @@
         destViewController.tvURLtoPlay = [NSURL URLWithString:station.stationURL];
     }
     
-}
-
-- (IBAction)returnfromTV:(UIStoryboardSegue *)unwindSegue
-{
-    self.indexOfSelectedStation = [NSNumber numberWithInt:-1];
-
 }
 
 

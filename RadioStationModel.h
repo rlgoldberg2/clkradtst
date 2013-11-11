@@ -14,6 +14,7 @@
 @interface RadioStationModel : NSObject
 
 +(AVPlayer *) radioStationPlay: (PresetStationData *)station;
-+(void) radioStationPlayPause: (AVPlayer *) player;
++(void) radioStationPause: (AVPlayer *) player;
++(void) radioStationResume: (AVPlayer *) player;
 
 @end

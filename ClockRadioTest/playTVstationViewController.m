@@ -11,6 +11,7 @@
 @interface playTVstationViewController ()
 
 @property (weak, nonatomic) IBOutlet UIWebView *TVview;
+@property (nonatomic) BOOL startPlaying;
 
 @end
 
@@ -30,10 +31,27 @@
     [super viewDidLoad];
 	// Do any additional setup after loading the view.
 
+    // this lets our program know when the user taps on the done button to exit from watching tv station
+    //[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(VideoExitFullScreen:) name:@"UIMoviePlayerControllerDidExitFullscreenNotification" object:nil];
+
     NSURLRequest *tvRequest = [NSURLRequest requestWithURL:self.tvURLtoPlay];
     [self.TVview loadRequest:tvRequest];
+    self.startPlaying = NO;
+
 
 }
+
+- (void)viewDidAppear:(BOOL)animated
+{
+    [super viewDidAppear:animated];
+    if (self.startPlaying == NO) {
+        self.startPlaying=YES;
+    }
+    else {
+        [self doneButton:self];
+    }
+}
+
 
 - (void)didReceiveMemoryWarning
 {
