@@ -340,21 +340,21 @@
                               withIcon:nil
                         withEditStatus:NO
                      withStationNumber:@4
-                         withMediaType:@"TV"];
+                         withMediaType:@"Television"];
     
     [self insertStationWithStationName:@"Deutsche Welle"
                                withURL:@"http://www.metafilegenerator.de/DWelle/tv-asia/ios/master.m3u8"
                               withIcon:nil
                         withEditStatus:NO
                      withStationNumber:@5
-                         withMediaType:@"TV"];
+                         withMediaType:@"Television"];
 
     [self insertStationWithStationName:@"CCTV — China"
                                withURL:@"http://cctv.lsops.net/live/cctv_en_hls.smil/playlist.m3u8"
                               withIcon:nil
                         withEditStatus:NO
                      withStationNumber:@99
-                         withMediaType:@"TV"];
+                         withMediaType:@"Television"];
 
     
     NSLog(@"Importing Core Data Default Values for Roles Completed!");
@@ -415,8 +415,9 @@
         setPresetStationViewController *destViewController = (id)[[navigationController viewControllers] objectAtIndex:0];
         PresetStationData *station = [self.radioStationsArray objectAtIndex:self.indexOfLongPressSelectedStation.row];
         destViewController.presetStationToChange = station;
+        destViewController.title = [NSString stringWithFormat:@"Set Preset Station #%d", station.presetStationNumber.intValue];
          
-        // if this station is currently playing, then pause it
+        // if this station is currently playing, then pause it by deselecting it
         NSLog(@"%d %d",self.indexOfLongPressSelectedStation.row, self.indexOfSelectedStation.intValue);
          
         if (self.indexOfLongPressSelectedStation.row == self.indexOfSelectedStation.intValue) {

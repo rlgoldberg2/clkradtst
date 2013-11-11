@@ -12,8 +12,7 @@
 @property (weak, nonatomic) IBOutlet UITextField *nameTextField;
 @property (weak, nonatomic) IBOutlet UITextField *urlStreamTextField;
 @property (weak, nonatomic) IBOutlet UITextField *urlIconTextField;
-@property (weak, nonatomic) IBOutlet UITextField *displayOrderTextField;
-@property (strong, nonatomic) NSNumber *originalDisplayOrder;
+@property (weak, nonatomic) IBOutlet UISegmentedControl *mediaTypeSegmentedControl;
 
 @end
 
@@ -33,63 +32,39 @@
     [super viewDidLoad];
 	// Do any additional setup after loading the view.
     // initialize text fields if the user selected a segue to edit
-    if (self.stationToEdit)  {
-        self.nameTextField.text = self.stationToEdit.stationName;
-        self.urlStreamTextField.text = self.stationToEdit.stationURL;
-        self.urlIconTextField.text = self.stationToEdit.stationIcon;
-        self.displayOrderTextField.text=[NSString stringWithFormat:@"%@", self.stationToEdit.presetStationNumber];
+    
+    self.nameTextField.text = self.stationToEdit.stationName;
+    self.urlStreamTextField.text = self.stationToEdit.stationURL;
+    self.urlIconTextField.text = self.stationToEdit.stationIcon;
+    if ([self.stationToEdit.mediaType isEqualToString:@"Radio"]) {
+        self.mediaTypeSegmentedControl.selectedSegmentIndex = 0;
     }
     else {
-        self.nameTextField.text=nil;
-        self.urlStreamTextField.text=nil;
-        self.urlIconTextField.text=nil;
-        self.displayOrderTextField.text=nil;
+        self.mediaTypeSegmentedControl.selectedSegmentIndex = 1;
     }
+
 }
 
-- (NSManagedObjectContext *)managedObjectContext {
-    NSManagedObjectContext *context = nil;
-    id delegate = [[UIApplication sharedApplication] delegate];
-    if ([delegate performSelector:@selector(managedObjectContext)]) {
-        context = [delegate managedObjectContext];
-    }
-    return context;
-}
 
 - (IBAction)save:(id)sender {
-    
-    NSManagedObjectContext *context = [self managedObjectContext];
-    int newDisplayOrder, oldDisplayOrder;
-    
+   
     // if user is editing station, then update name,url,icon and resave
     if (self.stationToEdit) {
         self.stationToEdit.stationName = self.nameTextField.text;
         self.stationToEdit.stationURL = self.urlStreamTextField.text;
         self.stationToEdit.stationIcon = self.urlIconTextField.text;
-        newDisplayOrder = [self.displayOrderTextField.text intValue];
-        oldDisplayOrder = [self.stationToEdit.presetStationNumber integerValue];
-        if (newDisplayOrder != oldDisplayOrder) {
-            [self.editStationsDelegate displayOrderHasChanged:oldDisplayOrder to:newDisplayOrder];
-        }
-        // isEditable is already set, so no need to change here
+        self.stationToEdit.mediaType =
+            self.mediaTypeSegmentedControl.selectedSegmentIndex? @"Radio":@"Television";
+        self.stationToEdit.presetStationNumber = @99;
+        self.stationToEdit.isEditable = [NSNumber numberWithBool: YES];
     }
+
+    self.stationToEdit.stationName = self.nameTextField.text;
+    self.stationToEdit.stationURL = self.urlStreamTextField.text;
+    self.stationToEdit.stationIcon = self.urlIconTextField.text;
+    self.stationToEdit.mediaType = self.mediaTypeSegmentedControl.selectedSegmentIndex? @"Radio" : @"Television";
     
-    // if user is adding station, then set all fields and save
-    else {
-        PresetStationData *newStation = [NSEntityDescription
-                                        insertNewObjectForEntityForName:@"PresetStationData"
-                                        inManagedObjectContext:context];
-        
-        newStation.stationName = self.nameTextField.text;
-        newStation.stationURL = self.urlStreamTextField.text;
-        newStation.stationIcon = self.urlIconTextField.text;
-        int displayOrderInt = [self.displayOrderTextField.text intValue];
-        newStation.presetStationNumber = [NSNumber numberWithInteger:displayOrderInt];
-        newStation.isEditable = [NSNumber numberWithBool:YES];
-    }
-    
-    NSError *error;
-    [context save:&error];
+    [self.editStationsDelegate editStationComplete:self didFinishWithSave:YES];
     
     [[self presentingViewController] dismissViewControllerAnimated:YES completion:nil];
     
@@ -97,7 +72,8 @@
 
 
 - (IBAction)cancel:(id)sender {
-    
+
+    [self.editStationsDelegate editStationComplete:self didFinishWithSave:NO];
     [[self presentingViewController] dismissViewControllerAnimated:YES completion:nil];
     
 }

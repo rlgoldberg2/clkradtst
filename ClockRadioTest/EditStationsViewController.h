@@ -13,7 +13,10 @@
 
 @interface EditStationsViewController : UIViewController
 
+// the following properties are passed through the segue
 @property (nonatomic, strong) PresetStationData *stationToEdit;
+@property (nonatomic, strong) NSManagedObjectContext *editingMOC;
+
 @property (nonatomic, weak) id<EditStationsDelegate> editStationsDelegate;
 
 @end
@@ -22,5 +25,6 @@
 
 @protocol EditStationsDelegate <NSObject>;
 @required
--(void) displayOrderHasChanged: (int) oldDisplayOrder to: (int) newDisplayOrder;
+- (void) editStationComplete:(EditStationsViewController *)controller didFinishWithSave:(BOOL)save;
+
 @end
