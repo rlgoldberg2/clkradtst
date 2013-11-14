@@ -184,7 +184,7 @@
     radioLabel.lineBreakMode = NSLineBreakByWordWrapping;
     
     // if it's sleep mode or there is no icon specified, then just display label and don't display icon
-    if ((self.displayMode.intValue == DISPLAY_MODE_SLEEP) || info.stationIcon==nil) {
+    if ((self.displayMode.intValue == DISPLAY_MODE_SLEEP) || info.stationIcon==nil || info.stationIcon.length == 0) {
         radioImage.hidden = YES;
         radioLabel.hidden = NO;
     }

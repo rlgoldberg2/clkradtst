@@ -67,7 +67,7 @@ bool anyEditableStations;
 {
 
     // if there are no editable stations, then display an alert to user and don't go into edit mode
-    if (anyEditableStations == NO) {
+    if (anyEditableStations == NO && editing==YES) {
         UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Defaults stations cannot be edited"
                                            message:@"Click on \"Add new radio or TV station\" button at bottom of list to add your own station"
                                           delegate:nil
@@ -135,14 +135,17 @@ bool anyEditableStations;
         // first check if icon name references a preloaded image file or an internet URL
         // if a preloaded file, then grab it
         if ([station.stationIcon rangeOfString:@"http://"].location == NSNotFound) {
-            cell.imageView.image = [UIImage imageNamed:station.stationIcon];
-            
-            // if it's not valid, then give error message
-            if (cell.imageView.image == nil) {
-                NSString *alertMessage = [NSString stringWithFormat:@"You have given an invalid URL for user-defined station %@", station.stationName];
-                UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"invalid URL" message: alertMessage delegate:self cancelButtonTitle:@"OK" otherButtonTitles: nil];
-                [alert show];
+            if (station.stationIcon.length > 0) {
                 
+                cell.imageView.image = [UIImage imageNamed:station.stationIcon];
+                
+                // if it's not valid, then give error message
+                if (cell.imageView.image == nil) {
+                    NSString *alertMessage = [NSString stringWithFormat:@"You have given an invalid URL for user-defined station %@", station.stationName];
+                    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"invalid URL" message: alertMessage delegate:self cancelButtonTitle:@"OK" otherButtonTitles: nil];
+                    [alert show];
+                    
+                }
             }
         }
         

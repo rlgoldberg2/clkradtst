@@ -73,7 +73,7 @@
     self.stationToEdit.stationName = self.nameTextField.text;
     self.stationToEdit.stationURL = self.urlStreamTextField.text;
     self.stationToEdit.stationIcon = self.urlIconTextField.text;
-    self.stationToEdit.mediaType = self.mediaTypeSegmentedControl.selectedSegmentIndex? @"Radio" : @"Television";
+    self.stationToEdit.mediaType = self.mediaTypeSegmentedControl.selectedSegmentIndex==0? @"Radio" : @"Television";
     
     [self.editStationsDelegate editStationComplete:self didFinishWithSave:YES];
     
