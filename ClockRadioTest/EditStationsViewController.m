@@ -11,6 +11,7 @@
 @interface EditStationsViewController ()
 {
     UITextField *activeField;
+    CGRect originalScrollViewSize;
 }
 
 @property (weak, nonatomic) IBOutlet UITextField *nameTextField;
@@ -117,6 +118,8 @@
     NSDictionary* info = [aNotification userInfo];
     CGSize kbSize = [[info objectForKey:UIKeyboardFrameBeginUserInfoKey] CGRectValue].size;
     
+    originalScrollViewSize = self.scrollView.frame;
+    
     UIEdgeInsets contentInsets = UIEdgeInsetsMake(0.0, 0.0, kbSize.height, 0.0);
     self.scrollView.contentInset = contentInsets;
     self.scrollView.scrollIndicatorInsets = contentInsets;
@@ -142,6 +145,8 @@
     UIEdgeInsets contentInsets = UIEdgeInsetsZero;
     self.scrollView.contentInset = contentInsets;
     self.scrollView.scrollIndicatorInsets = contentInsets;
+    self.scrollView.frame = originalScrollViewSize;
+    
 }
 
 - (void)textFieldDidBeginEditing:(UITextField *)textField
