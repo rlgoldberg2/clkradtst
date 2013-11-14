@@ -59,28 +59,33 @@ bool anyEditableStations;
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
-    anyEditableStations = NO;
 
 }
 
 - (void) setEditing:(BOOL)editing animated:(BOOL)animated
 {
 
-    // if there are no editable stations, then display an alert to user and don't go into edit mode
-    if (anyEditableStations == NO && editing==YES) {
+    // check if there are any editable stations (the preloaded stations are not editable, but the stations that the users has added are editable); as long as there are, then the user can enter edit mode
+    
+    
+    // clear the editable stations flag
+    anyEditableStations=NO;
+
+    // setEditing will call canEditRowAtIndexPath for every row.  This method will set the above flag if there are any editable rows
+    [super setEditing:editing animated:animated];
+
+    // if the user is trying to enter edit mode and there are no editable stations, then display message and revert out of edit mode
+    if ((editing) && (anyEditableStations==NO)) {
         UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Defaults stations cannot be edited"
-                                           message:@"Click on \"Add new radio or TV station\" button at bottom of list to add your own station"
-                                          delegate:nil
-                                 cancelButtonTitle:@"OK"
-                                 otherButtonTitles:nil];
+                                                        message:@"Click on \"Add new radio or TV station\" button at bottom of list to add your own station"
+                                                       delegate:nil
+                                              cancelButtonTitle:@"OK"
+                                              otherButtonTitles:nil];
         [alert show];
         [super setEditing:NO animated:animated];
+
     }
-    
-    // otherwise, it's ok to go into edit mode
-    else {
-        [super setEditing:editing animated:animated];
-    }
+
 }
 
 - (IBAction)cancelButton:(id)sender {
@@ -164,10 +169,6 @@ bool anyEditableStations;
 
     }
     
-    if (station.isEditable.intValue) {
-        anyEditableStations = YES;
-    }
-    
     // if this station is already assigned to a preset station, then dim it and make it unselectable
     if (preset < 99) {
         cell.detailTextLabel.text = [NSString stringWithFormat:@"preset #%d", preset];
@@ -237,7 +238,9 @@ bool anyEditableStations;
 {
     // Return NO if you do not want the specified item to be editable.
     PresetStationData *station = [self.frController objectAtIndexPath:indexPath];
+    
     if (station.isEditable.intValue) {
+        anyEditableStations=YES;
         return YES;
     }
     else {
@@ -467,7 +470,7 @@ bool anyEditableStations;
             abort();
         }
     }
-
+    [self setEditing:NO animated:YES];
 }
 
 

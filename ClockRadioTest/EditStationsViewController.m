@@ -19,6 +19,7 @@
 @property (weak, nonatomic) IBOutlet UITextField *urlIconTextField;
 @property (weak, nonatomic) IBOutlet UISegmentedControl *mediaTypeSegmentedControl;
 @property (weak, nonatomic) IBOutlet UIScrollView *scrollView;
+@property (weak, nonatomic) IBOutlet UIImageView *iconImageView;
 
 @end
 
@@ -52,7 +53,16 @@
     else {
         self.mediaTypeSegmentedControl.selectedSegmentIndex = 1;
     }
-    
+
+    dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0ul);
+    dispatch_async(queue, ^{
+        UIImage *image = [UIImage imageWithData:[NSData dataWithContentsOfURL:
+                                                       [NSURL URLWithString:self.urlIconTextField.text]]];
+        dispatch_sync(dispatch_get_main_queue(), ^{
+            self.iconImageView.image = image;
+        });
+    });
+
 }
 
 -(void)viewDidAppear:(BOOL)animated
@@ -71,6 +81,37 @@
    
     //  user is editing station, so update name,url,icon and resave
 
+    NSURL *candidateURL;
+    
+    // first check for valid url in url stream field (required field so length must be > 0
+    if (self.urlStreamTextField.text.length == 0) {
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Invalid streaming URL" message:@"You cannot leave the streaming URL field blank" delegate:self cancelButtonTitle:@"OK" otherButtonTitles: nil];
+        [alert show];
+        return;
+    }
+    else {
+        candidateURL = [NSURL URLWithString:self.urlStreamTextField.text];
+        if (!candidateURL || !candidateURL.scheme || !candidateURL.host) {
+            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Invalid streaming URL" message:@"Streaming URL field is not a valid URL.  Please correct this." delegate:self cancelButtonTitle:@"OK" otherButtonTitles: nil];
+            [alert show];
+            return;
+
+        }
+    }
+    
+    if (self.urlIconTextField.text.length > 0) {
+        self.iconImageView.image = [UIImage imageWithData:[NSData dataWithContentsOfURL:
+                                                           [NSURL URLWithString:self.urlIconTextField.text]]];
+        
+        // if it's not valid, then give error message
+        if (self.iconImageView.image == nil) {
+            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"invalid URL" message: @"You have given an invalid URL for the icon" delegate:self cancelButtonTitle:@"OK" otherButtonTitles: nil];
+            [alert show];
+            
+            return;
+        }
+    }
+    
     self.stationToEdit.stationName = self.nameTextField.text;
     self.stationToEdit.stationURL = self.urlStreamTextField.text;
     self.stationToEdit.stationIcon = self.urlIconTextField.text;
@@ -157,6 +198,16 @@
 - (void)textFieldDidEndEditing:(UITextField *)textField
 {
     activeField = nil;
+    if (textField == self.urlIconTextField) {
+        self.iconImageView.image = [UIImage imageWithData:[NSData dataWithContentsOfURL:
+                                                 [NSURL URLWithString:self.urlIconTextField.text]]];
+        
+        // if it's not valid, then give error message
+        if (self.iconImageView.image == nil) {
+            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"invalid URL" message: @"You have given an invalid URL for the icon" delegate:self cancelButtonTitle:@"OK" otherButtonTitles: nil];
+            [alert show];
+        }
+    }
 }
 
 - (BOOL)textFieldShouldReturn: (UITextField *)textField

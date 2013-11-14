@@ -325,6 +325,10 @@
                                                     <segment title="Television"/>
                                                 </segments>
                                             </segmentedControl>
+                                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Y4Y-NA-T5k">
+                                                <rect key="frame" x="110" y="298" width="100" height="100"/>
+                                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                            </imageView>
                                         </subviews>
                                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                                     </view>
@@ -335,6 +339,7 @@
                     </view>
                     <navigationItem key="navigationItem" id="DGa-xK-Tlo"/>
                     <connections>
+                        <outlet property="iconImageView" destination="Y4Y-NA-T5k" id="MB8-mr-h20"/>
                         <outlet property="mediaTypeSegmentedControl" destination="dUS-mK-MUG" id="awv-EJ-iLn"/>
                         <outlet property="nameTextField" destination="K8m-XX-OZ3" id="rAk-Ux-WPs"/>
                         <outlet property="scrollView" destination="fPh-zd-TL7" id="ERk-IT-2Hq"/>
