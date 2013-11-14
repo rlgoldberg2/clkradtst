@@ -16,7 +16,7 @@
 // the following properties are passed through the segue
 @property (nonatomic, strong) PresetStationData *stationToEdit;
 @property (nonatomic, strong) NSManagedObjectContext *editingMOC;
-
+@property (nonatomic) BOOL isAdded;
 @property (nonatomic, weak) id<EditStationsDelegate> editStationsDelegate;
 
 @end

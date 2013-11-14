@@ -10,7 +10,7 @@
 #import "PresetStationData.h"
 #import "EditStationsViewController.h"
 
-@interface setPresetStationViewController : UITableViewController <UITableViewDelegate, UITableViewDataSource, EditStationsDelegate>
+@interface setPresetStationViewController : UITableViewController <UITableViewDelegate, UITableViewDataSource, NSFetchedResultsControllerDelegate, EditStationsDelegate>
 
 @property (strong, nonatomic) PresetStationData *presetStationToChange;
 @end

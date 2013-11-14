@@ -66,6 +66,7 @@
     
     // force to start in day mode
     [self dayButtonPress:self];
+    [self updateTime];
 
 
     
@@ -90,7 +91,7 @@
     [self animateChangesInCollectionView];
     
     // setup timer with 1 sec interval so that clock displays current time
-    self.oneSecTimer = [NSTimer scheduledTimerWithTimeInterval:1.0 target:self selector:@selector(updateTime:) userInfo:nil repeats:YES];
+    self.oneSecTimer = [NSTimer scheduledTimerWithTimeInterval:1.0 target:self selector:@selector(updateTime) userInfo:nil repeats:YES];
     
 }
 
@@ -119,7 +120,7 @@
 }
 
 // the following method is automatically called by the timer
-- (void) updateTime:(NSTimer *)timer
+- (void) updateTime //(NSTimer *)timer
 {
     NSDate *currentTime;
     NSDate *currentDate;
@@ -177,21 +178,57 @@
     UILabel *radioLabel = (UILabel *) [cell viewWithTag:100];
     UIImageView *radioImage = (UIImageView *) [cell viewWithTag:200];
 
-    // if there was an icon specified, and it's not sleep mode, then display icon and hide label
-    if (info.stationIcon.length > 0 && [self.displayMode intValue] != DISPLAY_MODE_SLEEP) {
-        radioImage.image = [UIImage imageNamed:info.stationIcon];
-        radioImage.hidden = NO;
-        radioLabel.hidden = YES;
-    }
+    // setup label
+    radioLabel.text = info.stationName;
+    radioLabel.numberOfLines = 0;
+    radioLabel.lineBreakMode = NSLineBreakByWordWrapping;
     
-    // otherwise, display label and hide icon
-    else {
-        radioLabel.text = info.stationName;
+    // if it's sleep mode or there is no icon specified, then just display label and don't display icon
+    if ((self.displayMode.intValue == DISPLAY_MODE_SLEEP) || info.stationIcon==nil) {
         radioImage.hidden = YES;
         radioLabel.hidden = NO;
-        radioLabel.numberOfLines = 0;
-        [radioLabel setLineBreakMode:NSLineBreakByWordWrapping];
     }
+
+    // otherwise, let's see if we have a valid icon and display it if possible
+    else {
+        
+        // first check if icon name references a preloaded image file or an internet URL
+        // if a preloaded file, then grab it
+        if ([info.stationIcon rangeOfString:@"http://"].location == NSNotFound) {
+            radioImage.image = [UIImage imageNamed:info.stationIcon];
+            
+            // if it's valid, then display it
+            if (radioImage.image) {
+                radioImage.hidden = NO;
+                radioLabel.hidden = YES;
+            }
+            
+            // if it's not valid, then give error message and display label
+            else {
+                NSString *alertMessage = [NSString stringWithFormat:@"You have given an invalid URL for user-defined station %@", info.stationName];
+                UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"invalid URL" message: alertMessage delegate:self cancelButtonTitle:@"OK" otherButtonTitles: nil];
+                [alert show];
+                
+                radioLabel.hidden = NO;
+                radioImage.hidden = YES;
+            }
+        }
+        
+        // if we arrive here, this is an image file stored online, so let's grab it and display it asynchronously
+        else {
+            dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0ul);
+            dispatch_async(queue, ^{
+                UIImage *image = [UIImage imageWithData:[NSData dataWithContentsOfURL:
+                                                         [NSURL URLWithString:info.stationIcon]]];
+                dispatch_sync(dispatch_get_main_queue(), ^{
+                    radioImage.image = image;
+                    [cell setNeedsLayout];
+                });
+            });
+            radioLabel.hidden = YES;
+        }
+    }
+    
 
     // if this station is currently selected and playing, then we want to maintain that selection to keep the selected boarder around the cell
     if (indexPath.row == self.indexOfSelectedStation.intValue) {
@@ -220,7 +257,7 @@
         PresetStationData *station = [self.radioStationsArray objectAtIndex:indexPath.row];
 
         // play TV station
-        if ([station.mediaType isEqualToString:@"TV"]) {
+        if ([station.mediaType isEqualToString:@"Television"]) {
             
             // segue to view controller to play tv station
             [self performSegueWithIdentifier:@"playTVstation" sender:self];

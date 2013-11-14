@@ -35,6 +35,7 @@ bool anyEditableStations;
 
     self.moContext = [self setupManagedObjectContext];
     self.frController = [self setupFetchedResultsController];
+    self.frController.delegate = self;
     
     NSError *error;
     if (![self.frController performFetch:&error]) {
@@ -126,8 +127,38 @@ bool anyEditableStations;
     int preset = station.presetStationNumber.intValue;
 
     cell.textLabel.text = station.stationName;
+    
+    // if there is an icon name given, try to display it....
     if (station.stationIcon) {
-        cell.imageView.image = [UIImage imageNamed:station.stationIcon];
+        //cell.imageView.image = [UIImage imageNamed:station.stationIcon];
+        
+        // first check if icon name references a preloaded image file or an internet URL
+        // if a preloaded file, then grab it
+        if ([station.stationIcon rangeOfString:@"http://"].location == NSNotFound) {
+            cell.imageView.image = [UIImage imageNamed:station.stationIcon];
+            
+            // if it's not valid, then give error message
+            if (cell.imageView.image == nil) {
+                NSString *alertMessage = [NSString stringWithFormat:@"You have given an invalid URL for user-defined station %@", station.stationName];
+                UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"invalid URL" message: alertMessage delegate:self cancelButtonTitle:@"OK" otherButtonTitles: nil];
+                [alert show];
+                
+            }
+        }
+        
+        // if we arrive here, this is an image file stored online, so let's grab it and display it asynchronously
+        else {
+            dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0ul);
+            dispatch_async(queue, ^{
+                UIImage *image = [UIImage imageWithData:[NSData dataWithContentsOfURL:
+                                                         [NSURL URLWithString:station.stationIcon]]];
+                dispatch_sync(dispatch_get_main_queue(), ^{
+                    cell.imageView.image= image;
+                    [cell setNeedsLayout];
+                });
+            });
+        }
+
     }
     
     if (station.isEditable.intValue) {
@@ -165,27 +196,35 @@ bool anyEditableStations;
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
 
-    // user has selected a new station for this preset
-    // first, grab the preset station number of the current preset
-    int presetNumber = [self.presetStationToChange.presetStationNumber intValue];
-    
-    // then, reset the preset station number so that this station no longer appears on the preset list
-    self.presetStationToChange.presetStationNumber = @99;
-    
-    // finally, get the currently selected station and make this the new preset
-    PresetStationData *newPresetStation = [self.frController objectAtIndexPath:indexPath];
-    
-    // check if this selected station currently has a preset.  If so than swap it's preset #
-    if (newPresetStation.presetStationNumber.intValue != 99) {
-        self.presetStationToChange.presetStationNumber = newPresetStation.presetStationNumber;
+    // if we're in editing mode, then edit the selected cell
+    if (tableView.isEditing) {
+        [self performSegueWithIdentifier:@"editStation" sender:self];
     }
+ 
+    // otherwise, select this station as the new preset
     else {
+        // user has selected a new station for this preset
+        // first, grab the preset station number of the current preset
+        int presetNumber = [self.presetStationToChange.presetStationNumber intValue];
+        
+        // then, reset the preset station number so that this station no longer appears on the preset list
         self.presetStationToChange.presetStationNumber = @99;
+        
+        // finally, get the currently selected station and make this the new preset
+        PresetStationData *newPresetStation = [self.frController objectAtIndexPath:indexPath];
+        
+        // check if this selected station currently has a preset.  If so than swap it's preset #
+        if (newPresetStation.presetStationNumber.intValue != 99) {
+            self.presetStationToChange.presetStationNumber = newPresetStation.presetStationNumber;
+        }
+        else {
+            self.presetStationToChange.presetStationNumber = @99;
+        }
+        newPresetStation.presetStationNumber = [NSNumber numberWithInt:presetNumber];
+        
+        [self saveStationList];
+        [[self presentingViewController] dismissViewControllerAnimated:YES completion:nil];
     }
-    newPresetStation.presetStationNumber = [NSNumber numberWithInt:presetNumber];
-    
-    [self saveStationList];
-    [[self presentingViewController] dismissViewControllerAnimated:YES completion:nil];
     
 }
 
@@ -204,19 +243,38 @@ bool anyEditableStations;
 }
 
 
-/*
+
 // Override to support editing the table view.
 - (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath
 {
     if (editingStyle == UITableViewCellEditingStyleDelete) {
         // Delete the row from the data source
-        [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
+        PresetStationData *stationToDelete = [self.frController objectAtIndexPath:indexPath];
+        
+        // if this station is not currently set as a preset, then delete it
+        if (stationToDelete.presetStationNumber.intValue == 99) {
+            [self.moContext deleteObject:stationToDelete];
+            
+            NSError *error = nil;
+            if (![self.moContext save:&error]) {
+                // Replace this implementation with code to handle the error appropriately.
+                // abort() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
+                NSLog(@"Unresolved error %@, %@", error, [error userInfo]);
+                abort();
+            }
+        }
+        else {
+            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Cannot Delete" message:@"You cannot delete a station if it is currently selected as a preset station.  First, change this so it is not a preset station and then you can delete it" delegate:self cancelButtonTitle:@"OK" otherButtonTitles: nil];
+            [alert show];
+        }
+        
+        
     }   
     else if (editingStyle == UITableViewCellEditingStyleInsert) {
         // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
     }   
 }
-*/
+
 
 /*
 // Override to support rearranging the table view.
@@ -233,6 +291,65 @@ bool anyEditableStations;
     return YES;
 }
 */
+
+
+/*
+ NSFetchedResultsController delegate methods to respond to additions, removals and so on.
+ */
+- (void)controllerWillChangeContent:(NSFetchedResultsController *)controller {
+    
+    // The fetch controller is about to start sending change notifications, so prepare the table view for updates.
+    [self.tableView beginUpdates];
+}
+
+
+- (void)controller:(NSFetchedResultsController *)controller didChangeObject:(id)anObject atIndexPath:(NSIndexPath *)indexPath forChangeType:(NSFetchedResultsChangeType)type newIndexPath:(NSIndexPath *)newIndexPath {
+    
+    UITableView *tableView = self.tableView;
+    
+    switch(type) {
+            
+        case NSFetchedResultsChangeInsert:
+            [tableView insertRowsAtIndexPaths:@[newIndexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
+            break;
+            
+        case NSFetchedResultsChangeDelete:
+            [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
+            break;
+            
+        case NSFetchedResultsChangeUpdate:
+            [self configureCell:[tableView cellForRowAtIndexPath:indexPath] atIndexPath:indexPath];
+            break;
+            
+        case NSFetchedResultsChangeMove:
+            [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
+            [tableView insertRowsAtIndexPaths:@[newIndexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
+            break;
+    }
+}
+
+
+- (void)controller:(NSFetchedResultsController *)controller didChangeSection:(id <NSFetchedResultsSectionInfo>)sectionInfo atIndex:(NSUInteger)sectionIndex forChangeType:(NSFetchedResultsChangeType)type
+{
+    switch(type) {
+            
+        case NSFetchedResultsChangeInsert:
+            [self.tableView insertSections:[NSIndexSet indexSetWithIndex:sectionIndex] withRowAnimation:UITableViewRowAnimationAutomatic];
+            break;
+            
+        case NSFetchedResultsChangeDelete:
+            [self.tableView deleteSections:[NSIndexSet indexSetWithIndex:sectionIndex] withRowAnimation:UITableViewRowAnimationAutomatic];
+            break;
+    }
+}
+
+- (void)controllerDidChangeContent:(NSFetchedResultsController *)controller {
+    
+    // The fetch controller has sent all current change notifications, so tell the table view to process all updates.
+    [self.tableView endUpdates];
+}
+
+
 
 
 #pragma mark -- user inserted methods for accessing core data
@@ -293,20 +410,27 @@ bool anyEditableStations;
         NSManagedObjectContext *addingContext = [[NSManagedObjectContext alloc] initWithConcurrencyType:NSMainQueueConcurrencyType];
         [addingContext setParentContext:self.moContext];
         
-        destViewController.stationToEdit = [NSEntityDescription insertNewObjectForEntityForName:@"PresetStationData" inManagedObjectContext:addingContext];
+        PresetStationData *newStation = (PresetStationData *) [NSEntityDescription insertNewObjectForEntityForName:@"PresetStationData" inManagedObjectContext:addingContext];
         
-        destViewController.stationToEdit.stationName = nil;
-        destViewController.stationToEdit.stationURL = nil;
-        destViewController.stationToEdit.stationIcon = nil;
-        destViewController.stationToEdit.mediaType = @"Radio";
-        destViewController.stationToEdit.presetStationNumber = @99;
-        destViewController.stationToEdit.isEditable = [NSNumber numberWithBool:YES];
+        newStation.stationName = nil;
+        newStation.stationURL = nil;
+        newStation.stationIcon = nil;
+        newStation.mediaType = @"Radio";
+        newStation.presetStationNumber = @99;
+        newStation.isEditable = [NSNumber numberWithBool:YES];
+        
+        destViewController.stationToEdit = newStation;
+        destViewController.editingMOC = addingContext;
+        //destViewController.isAdded = NO;
+        
+        
     }
     
     // user wants to edit the currently selected station
     if ([[segue identifier] isEqualToString:@"editStation"]) {
         NSIndexPath *indexPath = [self.tableView indexPathForSelectedRow];
         destViewController.stationToEdit = [self.frController objectAtIndexPath:indexPath];
+        destViewController.editingMOC = self.moContext;
     }
     
 }
